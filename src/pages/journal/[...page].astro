@@ -14,8 +14,8 @@ export async function getStaticPaths({ paginate }) {
 const { page } = Astro.props;
 ---
 
-<BaseLayout title="日記">
-  <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">日記</h1>
+<BaseLayout title="Journal">
+  <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Journal</h1>
   <section>
     {page.data.map((entry) => <JournalPreview entry={entry} />)}
   </section>

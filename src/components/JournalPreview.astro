@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { title, date, mood, weather, image } = entry.data;
+const { title, date, weather, image } = entry.data;
 
 // Format date for URL
 const year = date.getFullYear();
@@ -44,7 +44,6 @@ const imageHeight = 400;
       </div>
     </header>
     <div class="flex gap-4 text-sm text-gray-600 dark:text-gray-300">
-      {mood && <div>気分: {mood}</div>}
       {weather && <div>天気: {weather}</div>}
     </div>
   </article>

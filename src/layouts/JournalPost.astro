@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { entry } = Astro.props
-const { title, date, mood, weather, image } = entry.data
+const { title, date, weather, image } = entry.data
 ---
 
 <BaseLayout title={title}>
@@ -22,10 +22,6 @@ const { title, date, mood, weather, image } = entry.data
         <PostDate date={date} />
       </div>
       <div class="flex gap-6 text-gray-600 dark:text-gray-300">
-        {mood && <div class="flex items-center">
-          <span class="font-semibold mr-2">気分:</span>
-          <span>{mood}</span>
-        </div>}
         {weather && <div class="flex items-center">
           <span class="font-semibold mr-2">天気:</span>
           <span>{weather}</span>
