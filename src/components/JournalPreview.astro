@@ -1,6 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import PostDate from './PostDate.astro';
 import { Image } from 'astro:assets';
 
 interface Props {
@@ -39,9 +38,6 @@ const imageHeight = 400;
       <h2 class="text-xl font-bold mb-2 text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400">
         {title}
       </h2>
-      <div class="mb-4">
-        <PostDate date={date} />
-      </div>
     </header>
     <div class="flex gap-4 text-sm text-gray-600 dark:text-gray-300">
       {weather && <div>天気: {weather}</div>}
