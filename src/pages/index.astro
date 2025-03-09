@@ -1,17 +1,26 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogPreview from '../components/BlogPreview.astro'
+import JournalPreview from '../components/JournalPreview.astro'
 import SocialLinks from '../components/SocialLinks.astro'
 import { getCollection } from 'astro:content'
 import { filterPosts } from '../utils/posts'
 import { siteConfig } from '../config'
 
-const posts = await getCollection('blog')
+const [posts, journalEntries] = await Promise.all([
+  getCollection('blog'),
+  getCollection('journal')
+]);
 
 // Configure homepage post filtering
 const homePagePosts = filterPosts(posts, {
   ...siteConfig.homepage,
 })
+
+// Get latest journal entries
+const latestJournalEntries = journalEntries
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3)
 ---
 
 <BaseLayout title={siteConfig.title}>
@@ -21,7 +30,19 @@ const homePagePosts = filterPosts(posts, {
     <SocialLinks />
   </div>
 
-  <section>
-    {homePagePosts.map((post) => <BlogPreview post={post} />)}
-  </section>
+  <div class="space-y-16">
+    <section>
+      <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">最新の日記</h2>
+      <div class="space-y-8">
+        {latestJournalEntries.map((entry) => <JournalPreview entry={entry} />)}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">ブログ記事</h2>
+      <div class="space-y-8">
+        {homePagePosts.map((post) => <BlogPreview post={post} />)}
+      </div>
+    </section>
+  </div>
 </BaseLayout>
