@@ -10,6 +10,7 @@ export interface SiteConfig {
     linkedin?: string;
     email?: string;
     rss?: boolean;
+    x?: string;
   };
   homepage: PostFilter;
   googleAnalysis?: string;
@@ -26,6 +27,7 @@ export const siteConfig: SiteConfig = {
     // linkedin: "https://www.linkedin.com/in/someone/", // leave empty if you don't want to show the linkedin
     // email: "example@gmail.com", // leave empty if you don't want to show the email
     rss: true, // set this to false if you don't want to provide an rss feed
+    x: "https://x.com/kechiiin_",
   },
   homepage: {
     maxPosts: 5,
