@@ -20,7 +20,7 @@ export const siteConfig: SiteConfig = {
   site: "https://blog.kechiiiiin.com/", // your site url
   title: "まあ、そうかもしれない",
   slogan: "このサイトについて",
-  description: "write a description here",
+  description: "ブログ書いたり、日記書いたり、自由なことを書いていきます",
   social: {
     github: "https://github.com/keisuke-yamauch1", // leave empty if you don't want to show the github
     // linkedin: "https://www.linkedin.com/in/someone/", // leave empty if you don't want to show the linkedin
