@@ -15,6 +15,7 @@ const blog = defineCollection({
 const diary = defineCollection({
   schema: z.object({
     title: z.string(),
+    description: z.string().optional(),
     date: z.date(),
     weather: z.string().optional(),
     image: z.string().optional(),
