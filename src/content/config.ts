@@ -12,7 +12,7 @@ const blog = defineCollection({
   }),
 });
 
-const journal = defineCollection({
+const diary = defineCollection({
   schema: z.object({
     title: z.string(),
     date: z.date(),
@@ -21,4 +21,4 @@ const journal = defineCollection({
   }),
 });
 
-export const collections = { blog, journal };
+export const collections = { blog, diary };

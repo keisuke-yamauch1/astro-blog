@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DiaryPreview from '../../components/DiaryPreview.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths({ paginate }) {
+  const entries = await getCollection('diary');
+  const sortedEntries = entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+  return paginate(sortedEntries, { pageSize: 10 });
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title="Diary">
+  <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Diary</h1>
+  <section>
+    {page.data.map((entry) => <DiaryPreview entry={entry} />)}
+  </section>
+  <Pagination
+    currentPage={page.currentPage}
+    totalPages={page.lastPage}
+    baseUrl="/diary/"
+  />
+</BaseLayout>

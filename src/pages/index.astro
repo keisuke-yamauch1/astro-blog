@@ -1,15 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogPreview from '../components/BlogPreview.astro'
-import JournalPreview from '../components/JournalPreview.astro'
+import DiaryPreview from '../components/DiaryPreview.astro'
 import SocialLinks from '../components/SocialLinks.astro'
 import { getCollection } from 'astro:content'
 import { filterPosts } from '../utils/posts'
 import { siteConfig } from '../config'
 
-const [posts, journalEntries] = await Promise.all([
+const [posts, diaryEntries] = await Promise.all([
   getCollection('blog'),
-  getCollection('journal')
+  getCollection('diary')
 ]);
 
 // Configure homepage post filtering
@@ -17,8 +17,8 @@ const homePagePosts = filterPosts(posts, {
   ...siteConfig.homepage,
 })
 
-// Get latest journal entries
-const latestJournalEntries = journalEntries
+// Get latest diary entries
+const latestDiaryEntries = diaryEntries
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3)
 ---
@@ -34,7 +34,7 @@ const latestJournalEntries = journalEntries
     <section>
       <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">最新の日記</h2>
       <div class="space-y-8">
-        {latestJournalEntries.map((entry) => <JournalPreview entry={entry} />)}
+        {latestDiaryEntries.map((entry) => <DiaryPreview entry={entry} />)}
       </div>
     </section>
 
