@@ -22,4 +22,10 @@ const diary = defineCollection({
   }),
 });
 
-export const collections = { blog, diary };
+const profile = defineCollection({
+  schema: z.object({
+  }),
+  type: 'content',
+});
+
+export const collections = { blog, diary, profile };

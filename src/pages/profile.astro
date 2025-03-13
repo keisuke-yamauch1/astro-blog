@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config';
+import { getEntry } from 'astro:content';
+
+// Get profile information from site config
+const profileInfo = {
+  name: siteConfig.title,
+  slogan: siteConfig.slogan,
+  social: siteConfig.social
+};
+
+// Load profile content from Markdown
+const profileEntry = await getEntry('profile', 'index');
+const { Content } = await profileEntry.render();
+---
+
+<BaseLayout title="Profile">
+  <h1 class="text-4xl font-bold mb-8 text-gray-900 dark:text-white">Profile</h1>
+
+  <!-- Markdown content -->
+  <div class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 prose dark:prose-invert max-w-none">
+    <Content />
+  </div>
+</BaseLayout>
