@@ -19,6 +19,10 @@ const { title, date, weather, image } = entry.data
         {title}
       </h1>
       <div class="flex gap-6 text-gray-600 dark:text-gray-300">
+        <div class="flex items-center">
+          <span class="font-semibold mr-2">日付:</span>
+          <span>{date.toLocaleDateString('ja-JP')}</span>
+        </div>
         {weather && <div class="flex items-center">
           <span class="font-semibold mr-2">天気:</span>
           <span>{weather}</span>
