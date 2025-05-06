@@ -1,9 +1,12 @@
 ---
-id: 4
+id: 1
 title: Astro+Vercelでブログを作る with Junie
 description: ブログ書くぞー そう思いつつも書けていなかった理由として、「せっかくなら自分で作ってブログ書こ」と思うのみで、何もしていなかったわけですが、...
 date: 2025-03-08
-tags: ["astro", "vercel", "junie"]
+tags:
+  - astro
+  - vercel
+  - junie
 ---
 
 ブログ書くぞー  
