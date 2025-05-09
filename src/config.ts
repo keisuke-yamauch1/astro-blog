@@ -18,7 +18,7 @@ export interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  site: "https://blog.kechiiiiin.com/", // your site url
+  site: "https://kechiiiiin.com/", // your site url
   title: "まあ、そうかもしれない",
   slogan: "このサイトについて",
   description: "けちーんです。ブログ書いたり、日記書いたり、自由に書いていきます",
