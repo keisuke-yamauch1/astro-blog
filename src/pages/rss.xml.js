@@ -6,9 +6,23 @@ export async function GET(context) {
   const blogCollection = 'blog';
   // id,slug,body,collection,data,render
   const blog = await getCollection(blogCollection);
+  const blogItems = blog.map((post) => ({
+    title: post.data.title,
+    description: post.data.description,
+    link: context.site + blogCollection + '/' + post.data.id,
+    pubDate: post.data.date,
+    content: post.body
+  }));
   const diaryCollection = 'diary';
   const diary = await getCollection(diaryCollection);
-  const allPosts = [...blog, ...diary];
+  const diaryItems = diary.map((post) => ({
+      title: post.data.title,
+      description: post.data.title,
+      link: context.site + diaryCollection + '/' + post.data.date.getFullYear() + '/' + (post.data.date.getMonth() + 1).toString().padStart(2, '0') + '/' + post.data.date.getDate().toString().padStart(2, '0'),
+      pubDate: post.data.date,
+      content: post.body
+  }));
+  const allItems = [...blogItems, ...diaryItems];
   return rss({
     // `<title>` field in output xml
     title: siteConfig.title,
@@ -19,12 +33,6 @@ export async function GET(context) {
     site: context.site,
     // Array of `<item>`s in output xml
     // See "Generating items" section for examples using content collections and glob imports
-    items: allPosts.map((post) => ({
-      title: post.data.title,
-      description: post.data.description,
-      link: context.site + blogCollection + '/' + post.slug,
-      pubDate: post.data.date,
-      content: post.body
-    })),
+    items: allItems,
   });
 }
