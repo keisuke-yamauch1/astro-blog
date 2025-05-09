@@ -3,9 +3,12 @@ import { siteConfig } from '../config';
 import { getCollection } from 'astro:content';
 
 export async function GET(context) {
-  const collection = 'blog';
+  const blogCollection = 'blog';
   // id,slug,body,collection,data,render
-  const blog = await getCollection(collection);
+  const blog = await getCollection(blogCollection);
+  const diaryCollection = 'diary';
+  const diary = await getCollection(diaryCollection);
+  const allPosts = [...blog, ...diary];
   return rss({
     // `<title>` field in output xml
     title: siteConfig.title,
@@ -16,10 +19,10 @@ export async function GET(context) {
     site: context.site,
     // Array of `<item>`s in output xml
     // See "Generating items" section for examples using content collections and glob imports
-    items: blog.map((post) => ({
+    items: allPosts.map((post) => ({
       title: post.data.title,
       description: post.data.description,
-      link: context.site + collection + '/' + post.slug,
+      link: context.site + blogCollection + '/' + post.slug,
       pubDate: post.data.date,
       content: post.body
     })),
