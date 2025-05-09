@@ -23,7 +23,7 @@ export async function GET(context) {
       content: post.body
   }));
   const allItems = [...blogItems, ...diaryItems];
-  const rssXml = await rss({
+  return rss({
     // `<title>` field in output xml
     title: siteConfig.title,
     // `<description>` field in output xml
@@ -34,13 +34,5 @@ export async function GET(context) {
     // Array of `<item>`s in output xml
     // See "Generating items" section for examples using content collections and glob imports
     items: allItems,
-  });
-
-  // Create a new response with shorter cache time (5 minutes)
-  return new Response(rssXml, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=300' // 5 minutes in seconds
-    }
   });
 }
