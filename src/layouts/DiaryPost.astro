@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
 import type { CollectionEntry } from 'astro:content'
+import { convertYoutubeLinks } from '../utils/youtube.js'
 
 interface Props {
   entry: CollectionEntry<'diary'>
@@ -9,6 +10,10 @@ interface Props {
 
 const { entry } = Astro.props
 const { title, date, weather, image } = entry.data
+
+// コンテンツを事前に処理
+const content = await Astro.slots.render('default');
+const processedContent = convertYoutubeLinks(content);
 ---
 
 <BaseLayout title={title}>
@@ -41,8 +46,8 @@ const { title, date, weather, image } = entry.data
       prose-span:text-gray-700 dark:prose-span:text-gray-300
       prose-li:text-gray-700 dark:prose-li:text-gray-300
       max-w-none"
+      set:html={processedContent}
     >
-      <slot />
     </div>
   </article>
 </BaseLayout>
