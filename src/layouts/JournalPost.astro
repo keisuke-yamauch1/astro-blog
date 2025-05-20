@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
 import type { CollectionEntry } from 'astro:content'
+import { convertYoutubeLinks } from '../utils/youtube.js'
 
 interface Props {
   entry: CollectionEntry<'journal'>
@@ -9,37 +10,6 @@ interface Props {
 
 const { entry } = Astro.props
 const { title, date, weather, image } = entry.data
-
-// YouTubeのURLを埋め込みに変換する関数
-function convertYoutubeLinks(content) {
-  if (!content) return content;
-  
-  // YouTube URLを含むaタグを検出するための正規表現
-  const youtubeRegex = /<a[^>]*href="(https?:\/\/(www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11}))"[^>]*>(.*?)<\/a>/g;
-  const youtubeShortRegex = /<a[^>]*href="(https?:\/\/(www\.)?youtu\.be\/([a-zA-Z0-9_-]{11}))"[^>]*>(.*?)<\/a>/g;
-  
-  let processedContent = content;
-  
-  // 通常のYouTube URLを処理
-  processedContent = processedContent.replace(youtubeRegex, (match, url, domain, videoId) => {
-    return `<div class="youtube-embed my-6 w-full aspect-video rounded-xl overflow-hidden shadow-lg">
-      <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen class="w-full h-full"></iframe>
-    </div>`;
-  });
-  
-  // 短縮URLを処理
-  processedContent = processedContent.replace(youtubeShortRegex, (match, url, domain, videoId) => {
-    return `<div class="youtube-embed my-6 w-full aspect-video rounded-xl overflow-hidden shadow-lg">
-      <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-        allowfullscreen class="w-full h-full"></iframe>
-    </div>`;
-  });
-  
-  return processedContent;
-}
 
 // コンテンツを事前に処理
 const content = await Astro.slots.render('default');
