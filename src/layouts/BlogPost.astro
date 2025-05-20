@@ -15,14 +15,14 @@ const { title, date, tags, image } = post.data
 function convertYoutubeLinks(content) {
   if (!content) return content;
   
-  // プレーンテキストのYouTube URLを検出するための正規表現
-  const youtubeRegex = /https?:\/\/(www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})(?:\s|<|$)/g;
-  const youtubeShortRegex = /https?:\/\/(www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})(?:\s|<|$)/g;
+  // YouTube URLを含むaタグを検出するための正規表現
+  const youtubeRegex = /<a[^>]*href="(https?:\/\/(www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11}))"[^>]*>(.*?)<\/a>/g;
+  const youtubeShortRegex = /<a[^>]*href="(https?:\/\/(www\.)?youtu\.be\/([a-zA-Z0-9_-]{11}))"[^>]*>(.*?)<\/a>/g;
   
   let processedContent = content;
   
   // 通常のYouTube URLを処理
-  processedContent = processedContent.replace(youtubeRegex, (match, domain, videoId) => {
+  processedContent = processedContent.replace(youtubeRegex, (match, url, domain, videoId) => {
     return `<div class="youtube-embed my-6 w-full aspect-video rounded-xl overflow-hidden shadow-lg">
       <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -31,7 +31,7 @@ function convertYoutubeLinks(content) {
   });
   
   // 短縮URLを処理
-  processedContent = processedContent.replace(youtubeShortRegex, (match, domain, videoId) => {
+  processedContent = processedContent.replace(youtubeShortRegex, (match, url, domain, videoId) => {
     return `<div class="youtube-embed my-6 w-full aspect-video rounded-xl overflow-hidden shadow-lg">
       <iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" 
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
