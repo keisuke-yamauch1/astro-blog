@@ -11,9 +11,9 @@ export function convertTwitterLinks(content) {
   let processedContent = content;
   
   processedContent = processedContent.replace(twitterRegex, (match, url) => {
-    return `<div class="twitter-embed my-6">
+    return `<astro-embed-tweet>
       <Tweet id="${url}" />
-    </div>`;
+    </astro-embed-tweet>`;
   });
   
   return processedContent;
