@@ -1,0 +1,15 @@
+---
+import { YouTube } from '@astro-community/astro-embed-youtube';
+
+interface Props {
+  id: string;
+  playlabel?: string;
+  params?: string;
+  posterQuality?: 'max' | 'high' | 'default' | 'low';
+  title?: string;
+}
+
+const { id, playlabel = "Play", params, posterQuality, title } = Astro.props;
+---
+
+<YouTube id={id} playlabel={playlabel} params={params} posterQuality={posterQuality} title={title} />
