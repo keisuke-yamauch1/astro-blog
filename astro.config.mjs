@@ -4,6 +4,7 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import { siteConfig } from './src/config';
 import { visit } from 'unist-util-visit';
 import mdx from '@astrojs/mdx';
+import embeds from 'astro-embed/integration';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -19,14 +20,37 @@ function rehypeTargetBlank() {
   };
 }
 
+// https://astro.build/config
+function rehypeCodeTitle() {
+  return (tree) => {
+    visit(tree, 'element', (node, index, parent) => {
+      if (node.tagName !== 'pre' || !node.properties?.className?.some(c => c.startsWith('language-'))) return;
+
+      const [lang, title] = node.properties.className[0].replace('language-', '').split(':');
+      if (!title) return;
+
+      node.properties.className[0] = `language-${lang}`;
+
+      const titleNode = {
+        type: 'element',
+        tagName: 'div',
+        properties: { className: ['code-title'] },
+        children: [{ type: 'text', value: title }]
+      };
+
+      parent.children.splice(index, 0, titleNode);
+    });
+  };
+}
+
 // Custom rehype plugin to add not-prose class to all images
 function rehypeImageNotProse() {
   return (tree) => {
     visit(tree, 'element', (node) => {
       if (node.tagName === 'img') {
         node.properties = node.properties || {};
-        node.properties.class = node.properties.class 
-          ? `${node.properties.class} not-prose` 
+        node.properties.class = node.properties.class
+          ? `${node.properties.class} not-prose`
           : 'not-prose';
       }
     });
@@ -35,7 +59,17 @@ function rehypeImageNotProse() {
 
 export default defineConfig({
   site: siteConfig.site,
-  integrations: [tailwind(), sitemap(), mdx()],
+  integrations: [tailwind(), embeds({
+    // Configure YouTube to use English UI
+    services: {
+      YouTube: {
+        params: 'hl=en&rel=0'
+      },
+      Tweet: true,
+      Vimeo: true,
+      LinkPreview: true
+    }
+  }), sitemap(), mdx()],
   markdown: {
     rehypePlugins: [
       [rehypePrettyCode, {
