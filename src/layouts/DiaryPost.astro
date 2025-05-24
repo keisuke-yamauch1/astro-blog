@@ -3,6 +3,8 @@ import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
 import type { CollectionEntry } from 'astro:content'
 import { convertYoutubeLinks } from '../utils/youtube.js'
+import { convertTwitterLinks } from '../utils/twitter.js'
+import { Tweet } from 'astro-embed'
 
 interface Props {
   entry: CollectionEntry<'diary'>
@@ -13,7 +15,7 @@ const { title, date, weather, image } = entry.data
 
 // コンテンツを事前に処理
 const content = await Astro.slots.render('default');
-const processedContent = convertYoutubeLinks(content);
+const processedContent = convertTwitterLinks(convertYoutubeLinks(content));
 ---
 
 <BaseLayout title={title}>
