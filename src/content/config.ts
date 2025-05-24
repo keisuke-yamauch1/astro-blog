@@ -25,21 +25,10 @@ const diary = defineCollection({
   }),
 });
 
-const journal = defineCollection({
-  // Allow both .md and .mdx files in the journal collection
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    date: z.date(),
-    weather: z.string().optional(),
-    image: z.string().optional(),
-  }),
-});
-
 const profile = defineCollection({
   type: 'content',
   schema: z.object({
   }),
 });
 
-export const collections = { blog, diary, journal, profile };
+export const collections = { blog, diary, profile };
