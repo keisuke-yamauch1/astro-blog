@@ -8,6 +8,18 @@ import embeds from 'astro-embed/integration';
 
 import sitemap from '@astrojs/sitemap';
 
+// Custom rehype plugin to add target="_blank" to all links
+function rehypeTargetBlank() {
+  return (tree) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName === 'a') {
+        node.properties = node.properties || {};
+        node.properties.target = '_blank';
+      }
+    });
+  };
+}
+
 // https://astro.build/config
 function rehypeCodeTitle() {
   return (tree) => {
@@ -50,6 +62,7 @@ export default defineConfig({
         theme: 'github-dark',
         keepBackground: false,
       }],
+      rehypeTargetBlank,
       rehypeCodeTitle
     ]
   }
