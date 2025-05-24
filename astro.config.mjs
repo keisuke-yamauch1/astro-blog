@@ -4,6 +4,7 @@ import rehypePrettyCode from 'rehype-pretty-code';
 import { siteConfig } from './src/config';
 import { visit } from 'unist-util-visit';
 import mdx from '@astrojs/mdx';
+import embeds from 'astro-embed/integration';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -21,7 +22,7 @@ function rehypeTargetBlank() {
 
 export default defineConfig({
   site: siteConfig.site,
-  integrations: [tailwind(), sitemap(), mdx()],
+  integrations: [tailwind(), embeds(), sitemap(), mdx()],
   markdown: {
     rehypePlugins: [
       [rehypePrettyCode, {

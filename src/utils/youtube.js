@@ -1,5 +1,7 @@
 /**
  * YouTubeリンクを埋め込みプレーヤーに変換するユーティリティ関数
+ * Note: astro-embed integration handles automatic URL conversion in MDX files
+ * This utility is used for manual processing or non-MDX content
  * @param {string} content - 変換するHTMLコンテンツ
  * @returns {string} - 変換後のHTMLコンテンツ
  */
