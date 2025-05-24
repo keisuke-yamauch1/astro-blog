@@ -14,7 +14,7 @@ const { title, description = 'A minimal blog focused on excellent reading experi
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,6 +36,9 @@ const { title, description = 'A minimal blog focused on excellent reading experi
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={`${siteConfig.site}icon.png`} />
+
+    <!-- Twitter Widget JavaScript -->
+    <script async src="https://platform.twitter.com/widgets.js"></script>
 
     {siteConfig.googleAnalysis && <GoogleAnalytics id={siteConfig.googleAnalysis} />}
     <ClientRouter />
