@@ -36,7 +36,9 @@ export default defineConfig({
   integrations: [tailwind(), embeds({
     // Configure YouTube to use English UI
     services: {
-      YouTube: true,
+      YouTube: {
+        params: 'hl=en&rel=0'
+      },
       Tweet: true,
       Vimeo: true,
       LinkPreview: true
