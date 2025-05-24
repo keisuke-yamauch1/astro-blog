@@ -3,6 +3,7 @@ import tailwind from '@astrojs/tailwind';
 import rehypePrettyCode from 'rehype-pretty-code';
 import { siteConfig } from './src/config';
 import { visit } from 'unist-util-visit';
+import mdx from '@astrojs/mdx';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -20,7 +21,7 @@ function rehypeTargetBlank() {
 
 export default defineConfig({
   site: siteConfig.site,
-  integrations: [tailwind(), sitemap()],
+  integrations: [tailwind(), sitemap(), mdx()],
   markdown: {
     rehypePlugins: [
       [rehypePrettyCode, {

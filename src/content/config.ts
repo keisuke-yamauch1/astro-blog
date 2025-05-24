@@ -1,6 +1,8 @@
 import { defineCollection, z } from 'astro:content';
 
 const blog = defineCollection({
+  // Allow both .md and .mdx files in the blog collection
+  type: 'content',
   schema: z.object({
     id: z.number(),
     title: z.string(),
@@ -13,6 +15,19 @@ const blog = defineCollection({
 });
 
 const diary = defineCollection({
+  // Allow both .md and .mdx files in the diary collection
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    weather: z.string().optional(),
+    image: z.string().optional(),
+  }),
+});
+
+const journal = defineCollection({
+  // Allow both .md and .mdx files in the journal collection
+  type: 'content',
   schema: z.object({
     title: z.string(),
     date: z.date(),
@@ -22,9 +37,9 @@ const diary = defineCollection({
 });
 
 const profile = defineCollection({
+  type: 'content',
   schema: z.object({
   }),
-  type: 'content',
 });
 
-export const collections = { blog, diary, profile };
+export const collections = { blog, diary, journal, profile };
