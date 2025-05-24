@@ -6,6 +6,9 @@ date: 2025-05-24
 tags: ["tech", "astro", "embed"]
 ---
 import { YouTube } from '@astro-community/astro-embed-youtube';
+import { Tweet } from 'astro-embed';
+import { Vimeo } from 'astro-embed';
+import { LinkPreview } from 'astro-embed';
 
 # Astro Embed サンプルページ
 
@@ -13,15 +16,15 @@ import { YouTube } from '@astro-community/astro-embed-youtube';
 
 ## YouTube動画
 
-https://www.youtube.com/watch?v=dQw4w9WgXcQ
+<YouTube id="dQw4w9WgXcQ" playlabel="Play" />
 
 ## Twitter（X）投稿
 
-https://twitter.com/astrodotbuild/status/1758531037479350611
+<Tweet id="https://x.com/kechiiin_/status/1926112141943136673" />
 
 ## Vimeo動画
 
-https://vimeo.com/32001208
+<Vimeo id="32001208" />
 
 ## 短縮YouTube URL
 
@@ -29,6 +32,6 @@ https://vimeo.com/32001208
 
 ## リンクプレビュー
 
-https://astro.build
+<LinkPreview id="https://www.amazon.co.jp/" />
 
-これらのURLは自動的に適切な埋め込みコンポーネントに変換されます。
+これらのタグは自動的に適切な埋め込みコンポーネントに変換されます。
