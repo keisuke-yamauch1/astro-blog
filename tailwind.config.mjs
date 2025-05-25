@@ -42,6 +42,14 @@ export default {
               borderRadius: '0.25rem',
               fontWeight: '400',
             },
+            a: {
+              color: 'rgb(37, 99, 235)',
+              '&:hover': {
+                color: 'rgb(29, 78, 216)',
+              },
+              overflowWrap: 'break-word',
+              wordBreak: 'break-word',
+            },
           },
         },
         dark: {
