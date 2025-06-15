@@ -52,7 +52,6 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
 
 {shouldShowStar && !isDev && (
   <Fragment>
-    <script type="text/javascript" src="https://s.st-hatena.com/js/HatenaStar.js"></script>
     <script type="text/javascript" set:html={`
       console.log('はてなスター設定開始:', {
         url: '${url}',
@@ -60,26 +59,54 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
         postId: ${postId}
       });
       
-      Hatena.Star.SiteConfig = {
-        entryNodes: {
-          'div.hatena-star-entry': {
-            uri: '${url}',
-            title: '${title || document.title}',
-            container: 'div.hatena-star-entry'
+      // はてなスターのスクリプトを動的に読み込み
+      if (!window.Hatena) {
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://s.st-hatena.com/js/HatenaStar.js'; // HTTPSに修正
+        script.onload = function() {
+          console.log('はてなスタースクリプト読み込み完了');
+          initHatenaStar();
+        };
+        script.onerror = function() {
+          console.error('はてなスタースクリプトの読み込みに失敗しました');
+        };
+        document.head.appendChild(script);
+      } else {
+        console.log('はてなスタースクリプトは既に読み込み済み');
+        initHatenaStar();
+      }
+      
+      function initHatenaStar() {
+        if (window.Hatena && window.Hatena.Star) {
+          console.log('はてなスター設定実行中...');
+          
+          window.Hatena.Star.SiteConfig = {
+            entryNodes: {
+              'div.hatena-star-entry': {
+                uri: '${url}',
+                title: '${title || document.title}',
+                container: 'div.hatena-star-entry'
+              }
+            }
+          };
+          
+          console.log('はてなスター設定完了:', window.Hatena.Star.SiteConfig);
+          
+          // エントリーを読み込み
+          if (window.Hatena.Star.EntryLoader) {
+            console.log('はてなスターエントリーローダー実行');
+            window.Hatena.Star.EntryLoader.loadEntries();
           }
+          
+          // 少し遅延してからエントリーを確認
+          setTimeout(function() {
+            console.log('はてなスターエントリー確認:', document.querySelector('div.hatena-star-entry'));
+          }, 2000);
+        } else {
+          console.error('Hatena.Starオブジェクトが見つかりません');
         }
-      };
-      
-      console.log('はてなスター設定完了:', Hatena.Star.SiteConfig);
-      
-      // 少し遅延してからエントリーを確認
-      setTimeout(function() {
-        console.log('はてなスターエントリー確認:', document.querySelector('div.hatena-star-entry'));
-        if (window.Hatena && window.Hatena.Star && window.Hatena.Star.EntryLoader) {
-          console.log('はてなスターエントリーローダー実行');
-          window.Hatena.Star.EntryLoader.loadEntries();
-        }
-      }, 1000);
+      }
     `}></script>
   </Fragment>
 )}
