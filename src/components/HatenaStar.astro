@@ -16,20 +16,26 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
 ---
 
 {shouldShowStar && (
-  <div class="hatena-star-container my-4 py-2">
-    <span class="hatena-star-inner-container" 
-          data-hatena-star-uri={url} 
-          data-hatena-star-title={title}
-          data-hatena-star-author={author}>
+  <div class="hatena-star-container my-4 py-3">
+    <div class="hatena-star-star-container" data-hatena-star-uri={url} data-hatena-star-title={title} data-hatena-star-author={author}>
       <!-- はてなスターがここに表示されます -->
       {isDev && (
-        <span class="dev-star-placeholder text-sm text-gray-500 dark:text-gray-400">
-          ⭐ はてなスター（本番環境でのみ表示されます）
-          {author && <span class="block text-xs mt-1">管理者: {author}</span>}
-          <span class="block text-xs mt-1">記事ID: {postId} ({contentType})</span>
-        </span>
+        <div class="dev-star-placeholder flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+          <span class="hatena-star-add-button-placeholder">☆ Add Star</span>
+          <div class="flex items-center gap-1">
+            <span class="text-yellow-500">★</span>
+            <span class="text-yellow-500">★</span>
+            <span class="text-yellow-500">★</span>
+            <div class="flex items-center gap-1 ml-2">
+              <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+              <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+              <div class="w-4 h-4 bg-red-500 rounded-full"></div>
+            </div>
+          </div>
+          <span class="text-xs text-gray-400 ml-2">（開発環境プレビュー）</span>
+        </div>
       )}
-    </span>
+    </div>
   </div>
 )}
 
@@ -67,22 +73,20 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
       function initHatenaStar() {
         if (window.Hatena && window.Hatena.Star) {
           // はてなスターの設定
-          const config = {
+          window.Hatena.Star.SiteConfig = {
             entryNodes: {
-              'span.hatena-star-inner-container': {
+              'div.hatena-star-star-container': {
                 uri: 'data-hatena-star-uri',
                 title: 'data-hatena-star-title',
-                container: 'span'
+                container: 'div.hatena-star-star-container'
               }
             }
           };
           
           // 管理者が指定されている場合は追加
           if (author) {
-            config.entryNodes['span.hatena-star-inner-container'].author = 'data-hatena-star-author';
+            window.Hatena.Star.SiteConfig.entryNodes['div.hatena-star-star-container'].author = 'data-hatena-star-author';
           }
-          
-          window.Hatena.Star.SiteConfig = config;
           
           // エントリーを読み込み
           if (window.Hatena.Star.EntryLoader) {
@@ -104,12 +108,100 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
     border-color: #374151;
   }
   
-  .hatena-star-inner-container {
-    display: block;
+  .hatena-star-star-container {
     min-height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   
-  .dev-star-placeholder {
-    font-style: italic;
+  .hatena-star-add-button-placeholder {
+    color: #6b7280;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .hatena-star-add-button-placeholder:hover {
+    color: #374151;
+  }
+  
+  .dark .hatena-star-add-button-placeholder {
+    color: #9ca3af;
+  }
+  
+  .dark .hatena-star-add-button-placeholder:hover {
+    color: #d1d5db;
+  }
+
+  /* はてなスターの実際のスタイル */
+  :global(.hatena-star-star-container) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  :global(.hatena-star-add-button) {
+    color: #6b7280 !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+    margin-right: 8px !important;
+    cursor: pointer !important;
+  }
+
+  :global(.hatena-star-add-button:hover) {
+    color: #374151 !important;
+  }
+
+  :global(.hatena-star-star) {
+    color: #fbbf24 !important;
+    font-size: 16px !important;
+    margin: 0 1px !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+  }
+
+  :global(.hatena-star-star.yellow-star) {
+    color: #fbbf24 !important;
+  }
+
+  :global(.hatena-star-star.red-star) {
+    color: #ef4444 !important;
+  }
+
+  :global(.hatena-star-star.green-star) {
+    color: #10b981 !important;
+  }
+
+  :global(.hatena-star-star.blue-star) {
+    color: #3b82f6 !important;
+  }
+
+  :global(.hatena-star-star.purple-star) {
+    color: #8b5cf6 !important;
+  }
+
+  :global(.hatena-star-comment-container) {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+    margin-left: 4px !important;
+  }
+
+  :global(.hatena-star-inner-count) {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+    margin-right: 4px !important;
+  }
+
+  :global(.dark .hatena-star-add-button) {
+    color: #9ca3af !important;
+  }
+
+  :global(.dark .hatena-star-add-button:hover) {
+    color: #d1d5db !important;
+  }
+
+  :global(.dark .hatena-star-inner-count) {
+    color: #9ca3af !important;
   }
 </style> 
