@@ -2,6 +2,8 @@
 import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
 import PostTags from '../components/PostTags.astro'
+import HatenaStar from '../components/HatenaStar.astro'
+import { siteConfig } from '../config'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
@@ -10,6 +12,7 @@ interface Props {
 
 const { post } = Astro.props
 const { title, date, tags, image } = post.data
+const postUrl = `${Astro.site}blog/${post.data.id}`
 ---
 
 <BaseLayout title={title}>
@@ -39,5 +42,8 @@ const { title, date, tags, image } = post.data
     >
       <slot />
     </div>
+    <footer class="mt-12">
+      <HatenaStar url={postUrl} title={title} author={siteConfig.hatenaUser} />
+    </footer>
   </article>
 </BaseLayout>

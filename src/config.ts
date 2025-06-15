@@ -15,10 +15,11 @@ export interface SiteConfig {
   homepage: PostFilter;
   googleAnalysis?: string;
   search?: boolean;
+  hatenaUser?: string; // はてなユーザー名
 }
 
 export const siteConfig: SiteConfig = {
-  site: "https://kechiiiiin.com/", // your site url
+  site: "https://www.kechiiiiin.com/", // your site url
   title: "まあ、そうかもしれない",
   slogan: "このサイトについて",
   description: "けちーんです。ブログ書いたり、日記書いたり、自由に書いていきます",
@@ -36,4 +37,5 @@ export const siteConfig: SiteConfig = {
   },
   googleAnalysis: "", // your google analysis id
   search: true, // set this to false if you don't want to provide a search feature
+  hatenaUser: "kechiiin",
 };
