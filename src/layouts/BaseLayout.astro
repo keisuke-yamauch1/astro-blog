@@ -1,7 +1,6 @@
 ---
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
-import { ClientRouter, slide } from 'astro:transitions'
 import { GoogleAnalytics } from 'astro-google-analytics'
 import { siteConfig } from '../config'
 
@@ -41,15 +40,14 @@ const { title, description = 'A minimal blog focused on excellent reading experi
     <script async src="https://platform.twitter.com/widgets.js"></script>
 
     {siteConfig.googleAnalysis && <GoogleAnalytics id={siteConfig.googleAnalysis} />}
-    <ClientRouter />
   </head>
   <body class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-      <Header transition:persist />
-      <main class="py-12" transition:animate={slide({ duration: '.3s' })}>
+      <Header />
+      <main class="py-12">
         <slot />
       </main>
-      <Footer transition:persist />
+      <Footer />
     </div>
   </body>
 </html>
