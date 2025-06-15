@@ -15,26 +15,29 @@ const experimentalBlogPostIds = [2]; // ID: 2のブログ記事のみ
 const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostIds.includes(postId);
 ---
 
-{shouldShowStar && (
+{shouldShowStar && !isDev && (
   <div class="hatena-star-container my-4 py-3">
-    <div class="hatena-star-star-container" data-hatena-star-uri={url} data-hatena-star-title={title} data-hatena-star-author={author}>
+    <div class="hatena-star-entry">
       <!-- はてなスターがここに表示されます -->
-      {isDev && (
-        <div class="dev-star-placeholder flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-          <span class="hatena-star-add-button-placeholder">☆ Add Star</span>
-          <div class="flex items-center gap-1">
-            <span class="text-yellow-500">★</span>
-            <span class="text-yellow-500">★</span>
-            <span class="text-yellow-500">★</span>
-            <div class="flex items-center gap-1 ml-2">
-              <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
-              <div class="w-4 h-4 bg-green-500 rounded-full"></div>
-              <div class="w-4 h-4 bg-red-500 rounded-full"></div>
-            </div>
-          </div>
-          <span class="text-xs text-gray-400 ml-2">（開発環境プレビュー）</span>
+    </div>
+  </div>
+)}
+
+{shouldShowStar && isDev && (
+  <div class="hatena-star-container my-4 py-3">
+    <div class="dev-star-placeholder flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+      <span class="hatena-star-add-button-placeholder">☆ Add Star</span>
+      <div class="flex items-center gap-1">
+        <span class="text-yellow-500">★</span>
+        <span class="text-yellow-500">★</span>
+        <span class="text-yellow-500">★</span>
+        <div class="flex items-center gap-1 ml-2">
+          <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+          <div class="w-4 h-4 bg-green-500 rounded-full"></div>
+          <div class="w-4 h-4 bg-red-500 rounded-full"></div>
         </div>
-      )}
+      </div>
+      <span class="text-xs text-gray-400 ml-2">（開発環境プレビュー）</span>
     </div>
   </div>
 )}
@@ -47,56 +50,39 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
   </div>
 )}
 
-<script is:inline define:vars={{ url, title, author, isDev, shouldShowStar }}>
-  // 開発環境では警告を表示
-  if (isDev && typeof console !== 'undefined') {
-    console.log('はてなスター開発モード:', { url, title, author, shouldShowStar });
-    console.log('はてなスターは本番環境（https://www.kechiiiiin.com/）でのみ動作します');
-  }
-
-  // はてなスターのスクリプトを読み込み（本番環境かつ表示対象の場合のみ）
-  if (!isDev && shouldShowStar) {
-    (function() {
-      if (typeof window.Hatena === 'undefined') {
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = 'https://s.st-hatena.com/js/HatenaStar.js';
-        script.async = true;
-        script.onload = function() {
-          initHatenaStar();
-        };
-        document.head.appendChild(script);
-      } else {
-        initHatenaStar();
-      }
-
-      function initHatenaStar() {
-        if (window.Hatena && window.Hatena.Star) {
-          // はてなスターの設定
-          window.Hatena.Star.SiteConfig = {
-            entryNodes: {
-              'div.hatena-star-star-container': {
-                uri: 'data-hatena-star-uri',
-                title: 'data-hatena-star-title',
-                container: 'div.hatena-star-star-container'
-              }
-            }
-          };
-          
-          // 管理者が指定されている場合は追加
-          if (author) {
-            window.Hatena.Star.SiteConfig.entryNodes['div.hatena-star-star-container'].author = 'data-hatena-star-author';
-          }
-          
-          // エントリーを読み込み
-          if (window.Hatena.Star.EntryLoader) {
-            window.Hatena.Star.EntryLoader.loadEntries();
+{shouldShowStar && !isDev && (
+  <Fragment>
+    <script type="text/javascript" src="https://s.st-hatena.com/js/HatenaStar.js"></script>
+    <script type="text/javascript" set:html={`
+      console.log('はてなスター設定開始:', {
+        url: '${url}',
+        title: '${title || ''}',
+        postId: ${postId}
+      });
+      
+      Hatena.Star.SiteConfig = {
+        entryNodes: {
+          'div.hatena-star-entry': {
+            uri: '${url}',
+            title: '${title || document.title}',
+            container: 'div.hatena-star-entry'
           }
         }
-      }
-    })();
-  }
-</script>
+      };
+      
+      console.log('はてなスター設定完了:', Hatena.Star.SiteConfig);
+      
+      // 少し遅延してからエントリーを確認
+      setTimeout(function() {
+        console.log('はてなスターエントリー確認:', document.querySelector('div.hatena-star-entry'));
+        if (window.Hatena && window.Hatena.Star && window.Hatena.Star.EntryLoader) {
+          console.log('はてなスターエントリーローダー実行');
+          window.Hatena.Star.EntryLoader.loadEntries();
+        }
+      }, 1000);
+    `}></script>
+  </Fragment>
+)}
 
 <style>
   .hatena-star-container {
@@ -108,11 +94,9 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
     border-color: #374151;
   }
   
-  .hatena-star-star-container {
+  .hatena-star-entry {
     min-height: 20px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    padding: 4px 0;
   }
   
   .hatena-star-add-button-placeholder {
@@ -134,12 +118,6 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
   }
 
   /* はてなスターの実際のスタイル */
-  :global(.hatena-star-star-container) {
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-  }
-
   :global(.hatena-star-add-button) {
     color: #6b7280 !important;
     font-size: 14px !important;
@@ -180,28 +158,11 @@ const shouldShowStar = contentType === 'blog' && postId && experimentalBlogPostI
     color: #8b5cf6 !important;
   }
 
-  :global(.hatena-star-comment-container) {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 2px !important;
-    margin-left: 4px !important;
-  }
-
-  :global(.hatena-star-inner-count) {
-    font-size: 12px !important;
-    color: #6b7280 !important;
-    margin-right: 4px !important;
-  }
-
   :global(.dark .hatena-star-add-button) {
     color: #9ca3af !important;
   }
 
   :global(.dark .hatena-star-add-button:hover) {
     color: #d1d5db !important;
-  }
-
-  :global(.dark .hatena-star-inner-count) {
-    color: #9ca3af !important;
   }
 </style> 
