@@ -42,16 +42,6 @@ const { title, description = 'A minimal blog focused on excellent reading experi
 
     {siteConfig.googleAnalysis && <GoogleAnalytics id={siteConfig.googleAnalysis} />}
     <ClientRouter />
-    <script is:inline>
-      // はてなスターのライブラリをサイトで一度だけ非同期に読み込みます。
-      const hatenaScriptSrc = 'https://s.hatena.ne.jp/js/HatenaStar.js';
-      if (!document.querySelector(`script[src="${hatenaScriptSrc}"]`)) {
-        const script = document.createElement('script');
-        script.src = hatenaScriptSrc;
-        script.async = true;
-        document.head.appendChild(script);
-      }
-    </script>
   </head>
   <body class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">

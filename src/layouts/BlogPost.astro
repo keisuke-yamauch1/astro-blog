@@ -40,30 +40,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       max-w-none"
     >
       <slot />
-      <div id="hatena-star-entry-container" class="my-4"></div>
+      <HatenaStar />
     </div>
   </article>
 </BaseLayout>
 
-<script type="text/javascript" src="https://s.hatena.ne.jp/js/HatenaStar.js" charset="utf-8"></script>
-<script define:vars={{
-    pageUri: '.post-url',
-    pageTitle: 'h1',
-    containerSelector: '#hatena-star-entry-container'
-  }}
->
-  document.addEventListener('DOMContentLoaded', () => {
-    if (typeof Hatena !== 'undefined' && Hatena.Star) {
-      Hatena.Star.SiteConfig = {
-        entryNodes: {
-          'article': {
-            uri: pageUri,
-            title: pageTitle,
-            container: containerSelector,
-            profileImageSelector: containerSelector
-          }
-        }
-      };
-    }
-  });
-</script>

@@ -3,42 +3,25 @@
 ---
 <div id="hatena-star-entry-container" class="my-4"></div>
 
-<script is:inline>
-  // is:inline を指定し、Astroによる最適化を避け、このスクリプトをそのままページに出力します。
-  // 外部ライブラリとの互換性の問題が解決することがあります。
-
-  function configureHatenaStar() {
-    // Hatenaのライブラリ本体が読み込まれているかを確認
-    if (typeof Hatena === 'undefined' || typeof Hatena.Star === 'undefined') {
-      // まだ読み込まれていなければ、少し待ってから再試行する
-      setTimeout(configureHatenaStar, 100);
-      return;
-    }
-
-    // DOMから記事のタイトルとURLを直接取得する（より確実な方法）
-    const titleElement = document.querySelector('h1');
-    const urlElement = document.querySelector('.post-url');
-
-    if (!titleElement || !urlElement) {
-      console.error('Hatena Star: 記事のタイトルかURLが見つかりません。');
-      return;
-    }
-
-    // 設定オブジェクトを作成
-    const siteConfig = {
-      entryNodes: {
-        'article': {
-          uri: urlElement.href,
-          title: titleElement.innerText,
-          container: '#hatena-star-entry-container',
+<script type="text/javascript" src="https://s.hatena.ne.jp/js/HatenaStar.js" charset="utf-8"></script>
+<script define:vars={{
+    pageUri: '.post-url',
+    pageTitle: 'h1',
+    containerSelector: '#hatena-star-entry-container'
+  }}
+>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Hatena !== 'undefined' && Hatena.Star) {
+      Hatena.Star.SiteConfig = {
+        entryNodes: {
+          'article': {
+            uri: pageUri,
+            title: pageTitle,
+            container: containerSelector,
+            profileImageSelector: containerSelector
+          }
         }
-      }
-    };
-
-    // 設定を適用
-    Hatena.Star.SiteConfig = siteConfig;
-  }
-
-  // Astroのページ遷移イベントごとに、設定関数を呼び出す
-  document.addEventListener('astro:page-load', configureHatenaStar);
+      };
+    }
+  });
 </script>
