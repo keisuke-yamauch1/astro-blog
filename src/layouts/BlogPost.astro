@@ -10,6 +10,7 @@ interface Props {
 
 const { post } = Astro.props
 const { title, date, tags, image } = post.data
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <BaseLayout title={title}>
@@ -19,6 +20,7 @@ const { title, date, tags, image } = post.data
       <h1 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-gray-100">
         {title}
       </h1>
+      <a href={canonicalURL.href} class="post-url" style="display: none;"></a>
       <div class="mb-6">
         <PostDate date={date} />
       </div>
@@ -38,6 +40,30 @@ const { title, date, tags, image } = post.data
       max-w-none"
     >
       <slot />
+      <div id="hatena-star-entry-container" class="my-4"></div>
     </div>
   </article>
 </BaseLayout>
+
+<script type="text/javascript" src="https://s.hatena.ne.jp/js/HatenaStar.js" charset="utf-8"></script>
+<script define:vars={{
+    pageUri: '.post-url',
+    pageTitle: 'h1',
+    containerSelector: '#hatena-star-entry-container'
+  }}
+>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Hatena !== 'undefined' && Hatena.Star) {
+      Hatena.Star.SiteConfig = {
+        entryNodes: {
+          'article': {
+            uri: pageUri,
+            title: pageTitle,
+            container: containerSelector,
+            profileImageSelector: containerSelector
+          }
+        }
+      };
+    }
+  });
+</script>
