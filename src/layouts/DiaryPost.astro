@@ -1,8 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
-import HatenaStar from '../components/HatenaStar.astro'
-import { siteConfig } from '../config'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
@@ -11,10 +9,6 @@ interface Props {
 
 const { entry } = Astro.props
 const { title, date, weather, image } = entry.data
-const year = date.getFullYear()
-const month = (date.getMonth() + 1).toString().padStart(2, '0')
-const day = date.getDate().toString().padStart(2, '0')
-const entryUrl = `${Astro.site}diary/${year}/${month}/${day}`
 ---
 
 <BaseLayout title={title}>
@@ -50,8 +44,5 @@ const entryUrl = `${Astro.site}diary/${year}/${month}/${day}`
     >
       <slot />
     </div>
-    <footer class="mt-12">
-      <HatenaStar url={entryUrl} title={title} author={siteConfig.hatenaUser} contentType="diary" />
-    </footer>
   </article>
 </BaseLayout>

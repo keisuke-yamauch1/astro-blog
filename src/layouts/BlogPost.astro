@@ -2,8 +2,6 @@
 import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
 import PostTags from '../components/PostTags.astro'
-import HatenaStar from '../components/HatenaStar.astro'
-import { siteConfig } from '../config'
 import type { CollectionEntry } from 'astro:content'
 
 interface Props {
@@ -12,48 +10,9 @@ interface Props {
 
 const { post } = Astro.props
 const { title, date, tags, image } = post.data
-const postUrl = `${Astro.site}blog/${post.data.id}`
-
-// 実験的に特定のブログ記事のみにスターを表示
-const experimentalBlogPostIds = [2];
-const shouldShowStar = experimentalBlogPostIds.includes(post.data.id);
 ---
 
 <BaseLayout title={title}>
-  {shouldShowStar && (
-    <Fragment slot="head">
-      <script type="text/javascript" src="https://s.hatena.ne.jp/js/HatenaStar.js"></script>
-      <script type="text/javascript" set:html={`
-        document.addEventListener('DOMContentLoaded', function() {
-          console.log('DOMContentLoaded - はてなスター初期化開始');
-          
-          if (window.Hatena && window.Hatena.Star) {
-            window.Hatena.Star.SiteConfig = {
-              entryNodes: {
-                'div.hatena-star-entry': {
-                  uri: '${postUrl}',
-                  title: '${title}',
-                  container: 'div.hatena-star-entry'
-                }
-              }
-            };
-            
-            console.log('はてなスター設定完了:', window.Hatena.Star.SiteConfig);
-            
-            setTimeout(function() {
-              if (window.Hatena.Star.EntryLoader) {
-                console.log('はてなスターエントリーローダー実行');
-                window.Hatena.Star.EntryLoader.loadEntries();
-              }
-            }, 500);
-          } else {
-            console.error('Hatena.Starが利用できません');
-          }
-        });
-      `}></script>
-    </Fragment>
-  )}
-  
   <article class="max-w-3xl mx-auto px-4">
     {image && <img src={image} alt={title} class="w-full h-[400px] object-cover rounded-xl shadow-lg mb-8" loading="eager" />}
     <header class="mb-12">
@@ -80,8 +39,5 @@ const shouldShowStar = experimentalBlogPostIds.includes(post.data.id);
     >
       <slot />
     </div>
-    <footer class="mt-12">
-      <HatenaStar url={postUrl} title={title} author={siteConfig.hatenaUser} postId={post.data.id} contentType="blog" />
-    </footer>
   </article>
 </BaseLayout>
