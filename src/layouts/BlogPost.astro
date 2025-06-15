@@ -43,7 +43,7 @@ const postUrl = `${Astro.site}blog/${post.data.id}`
       <slot />
     </div>
     <footer class="mt-12">
-      <HatenaStar url={postUrl} title={title} author={siteConfig.hatenaUser} />
+      <HatenaStar url={postUrl} title={title} author={siteConfig.hatenaUser} postId={post.data.id} contentType="blog" />
     </footer>
   </article>
 </BaseLayout>

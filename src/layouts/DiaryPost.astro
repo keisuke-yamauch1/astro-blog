@@ -51,7 +51,7 @@ const entryUrl = `${Astro.site}diary/${year}/${month}/${day}`
       <slot />
     </div>
     <footer class="mt-12">
-      <HatenaStar url={entryUrl} title={title} author={siteConfig.hatenaUser} />
+      <HatenaStar url={entryUrl} title={title} author={siteConfig.hatenaUser} contentType="diary" />
     </footer>
   </article>
 </BaseLayout>
