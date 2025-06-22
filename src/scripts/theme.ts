@@ -32,8 +32,12 @@ initTheme();
 document.addEventListener('astro:after-swap', initTheme);
 
 // Setup click listener
-document.addEventListener('astro:page-load', () => {
-  document
-    .getElementById('themeToggle')
-    ?.addEventListener('click', handleToggleClick);
-});
+const setupToggleListener = () => {
+  const toggleButton = document.getElementById('themeToggle');
+  if (toggleButton) {
+    toggleButton.addEventListener('click', handleToggleClick);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', setupToggleListener);
+document.addEventListener('astro:page-load', setupToggleListener);
