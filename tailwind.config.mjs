@@ -72,6 +72,18 @@ export default {
               color: 'rgb(229, 231, 235)',
               borderLeftColor: 'rgb(75, 85, 99)',
             },
+            'ul, ol': {
+              color: 'rgb(229, 231, 235)',
+            },
+            'li': {
+              color: 'rgb(229, 231, 235)',
+            },
+            'p': {
+              color: 'rgb(229, 231, 235)',
+            },
+            strong: {
+              color: 'rgb(243, 244, 246)',
+            },
           },
         },
       },

@@ -21,6 +21,24 @@ const { title, description = 'A minimal blog focused on excellent reading experi
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    
+    <!-- テーマの初期化スクリプト（FOUCを防ぐため） -->
+    <script is:inline>
+      (() => {
+        const theme = (() => {
+          if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+            return localStorage.getItem('theme');
+          }
+          return 'light';
+        })();
+        
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
