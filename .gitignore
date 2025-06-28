@@ -22,3 +22,18 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Salesforce CLI
+.sfdx/
+
+# VSCode settings
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Editor backup files
+*~
+*.swp
+*.swo
