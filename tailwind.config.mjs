@@ -50,6 +50,18 @@ export default {
               overflowWrap: 'break-word',
               wordBreak: 'break-word',
             },
+            li: {
+              marginTop: '0',
+              marginBottom: '0',
+            },
+          },
+        },
+        lg: {
+          css: {
+            li: {
+              marginTop: '0',
+              marginBottom: '0',
+            },
           },
         },
         dark: {
@@ -77,6 +89,8 @@ export default {
             },
             'li': {
               color: 'rgb(229, 231, 235)',
+              marginTop: '0',
+              marginBottom: '0',
             },
             'p': {
               color: 'rgb(229, 231, 235)',
