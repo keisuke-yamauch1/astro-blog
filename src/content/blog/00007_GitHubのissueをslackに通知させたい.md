@@ -1,14 +1,19 @@
 ---
 id: 7
 title: GitHubのissueをSlackに通知させたい
-description: GitHubをSlack通知してる人は多いと思いますが、issueはできないので困る repository全体の話ではなく、GitHubが個...
+description: GitHubをSlack通知してる人は多いと思いますが、issueはできないので困る repository自体を通知する/github su...
 date: 2025-07-02
 tags:
   - github
 imageNameKey: blog
 ---
 GitHubをSlack通知してる人は多いと思いますが、issueはできないので困る  
-repository全体の話ではなく、GitHubが個別に通知してくれる系のやつの話
+repository自体を通知する`/github subscribe owner/repository`これの話ではなく
+
+PRのコメントとかであれば、メンションなしでも通知（DM）くるけどissueは来ない  
+メンションしてくれれば、上のコマンドでリポジトリを購読しているチャンネルでメンションされて気付けるけど、メンションなしだと気付けない（見逃す）  
+のヤツ  
+伝わってるんだろうか？笑
 
 Scheduled reminderで設定する↓このへんのやつら  
 ![Image](../../assets/blog-20250702221931.jpg)
