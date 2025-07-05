@@ -1,6 +1,6 @@
 ---
 id: 7
-title: GitHubのissueをSlackに通知させたい
+title: GitHubのissueをSlack通知で気づきたい
 description: GitHubをSlack通知してる人は多いと思いますが、issueはできないので困る repository自体を通知する/github su...
 date: 2025-07-02
 tags:
