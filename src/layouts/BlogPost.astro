@@ -46,3 +46,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   </article>
 </BaseLayout>
 
+<style>
+  /* コードブロックの背景色を調整 */
+  :global(.astro-code) {
+    background-color: rgb(243, 244, 246) !important;
+    color: rgb(17, 24, 39) !important;
+  }
+  
+  :global(.dark .astro-code) {
+    background-color: rgb(243, 244, 246) !important;
+    color: rgb(17, 24, 39) !important;
+  }
+</style>
+

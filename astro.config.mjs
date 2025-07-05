@@ -73,7 +73,10 @@ export default defineConfig({
   markdown: {
     rehypePlugins: [
       [rehypePrettyCode, {
-        theme: 'github-dark',
+        theme: {
+          light: 'github-light',
+          dark: 'github-dark'
+        },
         onVisitLine(node) {
           if (node.children.length === 0) {
             node.children = [{type: 'text', value: ' '}];
