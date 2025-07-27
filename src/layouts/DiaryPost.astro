@@ -61,4 +61,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     background-color: rgb(243, 244, 246) !important;
     color: rgb(17, 24, 39) !important;
   }
+
+  /* ネストしたulの上下マージンを除去 */
+  :global(.prose li ul) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  :global(.prose li ol) {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 </style>
