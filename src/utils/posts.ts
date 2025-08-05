@@ -55,3 +55,30 @@ export function getAllTags(posts: CollectionEntry<'blog'>[]): string[] {
   const publishedPosts = filterPublishedPosts(posts);
   return [...new Set(publishedPosts.flatMap(post => post.data.tags || []))].sort();
 }
+
+// Emonicle utility functions
+export function sortEmoniclesByDate(posts: CollectionEntry<'emonicle'>[]): CollectionEntry<'emonicle'>[] {
+  return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}
+
+export function filterPublishedEmonicles(posts: CollectionEntry<'emonicle'>[]): CollectionEntry<'emonicle'>[] {
+  return posts.filter(post => !post.data.draft && isPublished(post.data.date));
+}
+
+export interface EmonicleFilter {
+  maxPosts?: number;
+}
+
+export function filterEmonicles(posts: CollectionEntry<'emonicle'>[], filter: EmonicleFilter = {}): CollectionEntry<'emonicle'>[] {
+  let filteredPosts = filterPublishedEmonicles(posts);
+
+  // Sort posts by date
+  filteredPosts = sortEmoniclesByDate(filteredPosts);
+
+  // Limit number of posts if maxPosts is specified
+  if (filter.maxPosts) {
+    filteredPosts = filteredPosts.slice(0, filter.maxPosts);
+  }
+
+  return filteredPosts;
+}

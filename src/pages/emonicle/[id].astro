@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import EmoniclePost from '../../layouts/EmoniclePost.astro';
+import { filterPublishedEmonicles } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('emonicle');
+  const publishedPosts = filterPublishedEmonicles(posts);
+
+  return publishedPosts.map((post) => ({
+    params: { id: post.data.id.toString() },
+    props: { post },
+  }));
+}
+
+const { id } = Astro.params;
+const { post } = Astro.props;
+
+// Validate that the ID exists and matches the post
+if (!post || !post.data || post.data.id.toString() !== id) {
+  return Astro.redirect('/404');
+}
+
+const { Content } = await post.render();
+---
+
+<EmoniclePost post={post}>
+  <Content />
+</EmoniclePost>

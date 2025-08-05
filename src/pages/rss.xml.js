@@ -1,6 +1,7 @@
 import rss from '@astrojs/rss';
 import { siteConfig } from '../config';
 import { getCollection } from 'astro:content';
+import { filterPublishedEmonicles } from '../utils/posts';
 
 export async function GET(context) {
   const blogCollection = 'blog';
@@ -22,7 +23,19 @@ export async function GET(context) {
       pubDate: post.data.date,
       content: post.body
   }));
-  const allItems = [...blogItems, ...diaryItems];
+  
+  const emonicleCollection = 'emonicle';
+  const emonicle = await getCollection(emonicleCollection);
+  const publishedEmonicles = filterPublishedEmonicles(emonicle);
+  const emonicleItems = publishedEmonicles.map((post) => ({
+    title: post.data.title,
+    description: post.data.description,
+    link: context.site + emonicleCollection + '/' + post.data.id,
+    pubDate: post.data.date,
+    content: post.body
+  }));
+  
+  const allItems = [...blogItems, ...diaryItems, ...emonicleItems];
   return rss({
     // `<title>` field in output xml
     title: siteConfig.title,

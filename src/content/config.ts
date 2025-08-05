@@ -25,10 +25,23 @@ const diary = defineCollection({
   }),
 });
 
+const emonicle = defineCollection({
+  // Allow both .md and .mdx files in the emonicle collection
+  type: 'content',
+  schema: z.object({
+    id: z.number(),
+    title: z.string(),
+    description: z.string().optional(),
+    date: z.date(),
+    draft: z.boolean().optional(),
+    image: z.string().optional(),
+  }),
+});
+
 const profile = defineCollection({
   type: 'content',
   schema: z.object({
   }),
 });
 
-export const collections = { blog, diary, profile };
+export const collections = { blog, diary, emonicle, profile };

@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content';
+import EmoniclePost from '../../layouts/EmoniclePost.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('emonicle');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<EmoniclePost post={post}>
+  <Content />
+</EmoniclePost>
