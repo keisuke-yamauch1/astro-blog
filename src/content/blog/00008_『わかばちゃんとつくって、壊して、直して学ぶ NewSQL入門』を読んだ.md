@@ -5,7 +5,7 @@ description: NewSQLについて全く理解していないので、『わかば�
 date: 2025-08-12
 tags:
   - 読書
-imageNameKey: blog
+  - 感想
 ---
 NewSQLについて全く理解していないので、『[わかばちゃんとつくって、壊して、直して学ぶ NewSQL入門](https://www.shoeisha.co.jp/book/detail/9784798189635)』を読んだ
 
