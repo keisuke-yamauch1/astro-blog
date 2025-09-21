@@ -20,7 +20,7 @@ weather: そこそこ雨
 ---
 
 特に意味はないが、ちびゴーヤの写真  
-![ちびゴーヤ](https://images.kechiiiiin.com/diary/20250920225609.jpeg)
+![ちびゴーヤ](https://images.kechiiiiin.com/diary/20250921103605.jpeg)
 
 ---
 

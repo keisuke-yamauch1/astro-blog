@@ -16,7 +16,7 @@ PRのコメントとかであれば、メンションなしでも通知（DM）�
 伝わってるんだろうか？笑
 
 Scheduled reminderで設定する↓このへんのやつら  
-![Image](../../assets/blog-20250702221931.jpg)
+![](https://images.kechiiiiin.com/blog/20250921103320.webp)
 
 これを無理やり？Slack通知させるようにしたのでそれについて書いていく  
 （こんなことせずとも通知されるのであれば教えて欲しい、、、）
@@ -30,14 +30,14 @@ Slack通知はできなくても、おそらくメール通知は来ていると
 まずは検索窓に表示されている「検索オプションを表示」からを開く  
 そこで以下の設定をする
 
-![Image](../../assets/blog-20250702222339.jpg)
+![](https://images.kechiiiiin.com/blog/20250921103402.webp)
 
 From: notifications@github.com  
 件名: Issue
 
 その状態で続行をクリックして以下のような設定をする
 
-![Image](../../assets/blog-20250702222637.jpg)
+![](https://images.kechiiiiin.com/blog/20250921103422.webp)
 
 細かい部分は好き好きに設定してもらって良いが、とりあえずラベルをつけるようにする  
 で、右下の「フィルタを更新」（初めてであれば更新じゃないと思う）をクリックする
@@ -51,7 +51,7 @@ From: notifications@github.com
 インテグレーションタブを開き、「アプリを追加する」をクリックする  
 「Incoming Webhooks」を追加する
 
-![Image](../../assets/blog-20250702223206.jpg)
+![](https://images.kechiiiiin.com/blog/20250921103434.webp)
 
 Slackに追加をクリックし諸々設定すると、Webhook URLが表示されるのでコピーしておく
 
