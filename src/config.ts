@@ -30,7 +30,7 @@ export const siteConfig: SiteConfig = {
     x: "https://x.com/kechiiin_",
   },
   homepage: {
-    maxPosts: 5,
+    maxPosts: 3,
     tags: [],
     excludeTags: [],
   },

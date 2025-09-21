@@ -20,7 +20,7 @@ const homePagePosts = filterPosts(posts, {
 // Get latest diary entries
 const latestDiaryEntries = diaryEntries
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3)
+  .slice(0, 5)
 ---
 
 <BaseLayout title={siteConfig.title}>
