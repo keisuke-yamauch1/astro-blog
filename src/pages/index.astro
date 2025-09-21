@@ -36,12 +36,18 @@ const latestDiaryEntries = diaryEntries
       <div class="space-y-8">
         {latestDiaryEntries.map((entry) => <DiaryPreview entry={entry} />)}
       </div>
+      <div class="mt-4 text-right">
+        <a href="/diary/" class="text-primary-500 hover:text-primary-600 text-sm">もっとみる →</a>
+      </div>
     </section>
 
     <section>
       <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">最新のブログ</h2>
       <div class="space-y-8">
         {homePagePosts.map((post) => <BlogPreview post={post} />)}
+      </div>
+      <div class="mt-4 text-right">
+        <a href="/blog/" class="text-primary-500 hover:text-primary-600 text-sm">もっとみる →</a>
       </div>
     </section>
   </div>
