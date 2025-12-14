@@ -6,5 +6,16 @@ export function formatDate(date: Date): string {
 }
 
 export function isPublished(date: Date): boolean {
-  return date <= new Date();
+  // 現在のJST日付を取得（年/月/日のみ）
+  const now = new Date();
+  const jstNow = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+
+  // 記事の日付をJSTとして解釈（年/月/日のみ）
+  const jstArticleDate = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+
+  // 日付のみで比較（時刻は無視）
+  jstNow.setHours(0, 0, 0, 0);
+  jstArticleDate.setHours(0, 0, 0, 0);
+
+  return jstArticleDate <= jstNow;
 }
