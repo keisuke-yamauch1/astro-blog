@@ -21,6 +21,7 @@ const diary = defineCollection({
     title: z.string(),
     date: z.date(),
     weather: z.string().optional(),
+    condition: z.string().optional(),
     image: z.string().optional(),
   }),
 });

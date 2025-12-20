@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { title, date, weather, image } = entry.data;
+const { title, date, weather, condition, image } = entry.data;
 
 // Format date for URL
 const year = date.getFullYear();
@@ -42,6 +42,7 @@ const imageHeight = 400;
     <div class="flex flex-col gap-2 text-sm text-gray-600 dark:text-gray-300">
       <div>日付：{date.toLocaleDateString('ja-JP')}</div>
       {weather && <div>天気：{weather}</div>}
+      {condition && <div>調子：{condition}</div>}
     </div>
   </article>
 </a>

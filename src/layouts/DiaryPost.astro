@@ -8,7 +8,7 @@ interface Props {
 }
 
 const { entry } = Astro.props
-const { title, date, weather, image } = entry.data
+const { title, date, weather, condition, image } = entry.data
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -28,6 +28,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         {weather && <div class="flex items-center">
           <span class="font-semibold mr-2 min-w-[2.5em]">天気:</span>
           <span>{weather}</span>
+        </div>}
+        {condition && <div class="flex items-center">
+          <span class="font-semibold mr-2 min-w-[2.5em]">調子:</span>
+          <span>{condition}</span>
         </div>}
       </div>
     </header>
