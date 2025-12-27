@@ -32,9 +32,8 @@ export const POST: APIRoute = async ({ request }) => {
       // Gitに追加
       execSync(`git add "${relativeFilePath}"`, { cwd });
 
-      // コミットメッセージを生成
-      const date = new Date().toISOString().split('T')[0];
-      const commitMessage = `diary: ${date}`;
+      // コミットメッセージを生成（選択された日付を使用）
+      const commitMessage = `diary: ${result.date}`;
 
       execSync(`git commit -m "${commitMessage}"`, { cwd });
 

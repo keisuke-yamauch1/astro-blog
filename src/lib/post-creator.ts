@@ -39,18 +39,17 @@ ${data.content}
 // 日記作成
 export async function createDiaryPost(data: {
   title: string;
-  weather?: string;
+  date?: string;
   condition?: string;
   content: string;
 }) {
-  const today = new Date().toISOString().split('T')[0];
+  const date = data.date || new Date().toISOString().split('T')[0];
   const sanitizedTitle = sanitizeFilename(data.title);
-  const filename = `${today}_${sanitizedTitle}.md`;
+  const filename = `${date}_${sanitizedTitle}.md`;
 
   const frontmatter = `---
 title: ${data.title}
-date: ${today}
-${data.weather ? `weather: ${data.weather}` : ''}
+date: ${date}
 ${data.condition ? `condition: ${data.condition}` : ''}
 ---
 
@@ -60,7 +59,7 @@ ${data.content}
   const filepath = path.join(process.cwd(), 'src/content/diary', filename);
   fs.writeFileSync(filepath, frontmatter, 'utf-8');
 
-  return { filename, filepath };
+  return { filename, filepath, date };
 }
 
 // 次のブログIDを取得
