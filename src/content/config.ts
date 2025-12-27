@@ -23,6 +23,7 @@ const diary = defineCollection({
     weather: z.string().optional(),
     condition: z.string().optional(),
     image: z.string().optional(),
+    draft: z.boolean().optional(),
   }),
 });
 

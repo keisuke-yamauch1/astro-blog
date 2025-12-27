@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = false;
+
+// 下書き記事のみ取得
+const drafts = (await getCollection('diary', (entry) => entry.data.draft === true))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="下書き一覧 | 管理画面">
+  <div id="auth-check"></div>
+
+  <div id="admin-content" class="hidden max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">下書き一覧</h1>
+      <a href="/admin" class="text-blue-600 hover:underline">新規作成</a>
+    </div>
+
+    {drafts.length === 0 ? (
+      <div class="text-center py-12 text-gray-500">
+        <p>下書きはありません</p>
+      </div>
+    ) : (
+      <div class="space-y-4">
+        {drafts.map((entry) => {
+          const date = entry.data.date;
+          const year = date.getFullYear().toString();
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const day = date.getDate().toString().padStart(2, '0');
+          const previewUrl = `/diary/${year}/${month}/${day}`;
+
+          return (
+            <div class="border rounded-lg p-6 dark:border-gray-700">
+              <div class="flex justify-between items-start mb-2">
+                <h2 class="text-xl font-semibold">{entry.data.title}</h2>
+                <span class="text-sm text-gray-500">
+                  {date.toLocaleDateString('ja-JP')}
+                </span>
+              </div>
+              {entry.data.condition && (
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  コンディション: {entry.data.condition}
+                </p>
+              )}
+              <div class="flex gap-3">
+                <a
+                  href={previewUrl}
+                  target="_blank"
+                  class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  プレビュー
+                </a>
+                <button
+                  class="publish-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  data-filename={entry.id}
+                  data-date={`${year}-${month}-${day}`}
+                >
+                  公開
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+
+  <script>
+    // 認証チェック
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      window.location.href = '/admin/login';
+    }
+
+    document.getElementById('admin-content')?.classList.remove('hidden');
+
+    // 公開ボタンのイベントハンドラー
+    const publishButtons = document.querySelectorAll('.publish-btn');
+    publishButtons.forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        const button = e.target as HTMLButtonElement;
+        const filename = button.dataset.filename;
+        const date = button.dataset.date;
+
+        if (!confirm('この下書きを公開しますか？\n（gitにコミット＆プッシュされます）')) {
+          return;
+        }
+
+        try {
+          button.textContent = '公開中...';
+          button.disabled = true;
+
+          const response = await fetch('/admin/api/publish-draft', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ filename, date })
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            alert('✓ 公開成功！');
+            window.location.reload();
+          } else {
+            alert(`エラー: ${result.error}`);
+            button.textContent = '公開';
+            button.disabled = false;
+          }
+        } catch (error) {
+          alert(`エラー: ${(error as Error).message}`);
+          button.textContent = '公開';
+          button.disabled = false;
+        }
+      });
+    });
+  </script>
+</BaseLayout>

@@ -42,6 +42,7 @@ export async function createDiaryPost(data: {
   date?: string;
   condition?: string;
   content: string;
+  draft?: boolean;
 }) {
   const date = data.date || new Date().toISOString().split('T')[0];
   const sanitizedTitle = sanitizeFilename(data.title);
@@ -51,6 +52,7 @@ export async function createDiaryPost(data: {
 title: ${data.title}
 date: ${date}
 ${data.condition ? `condition: ${data.condition}` : ''}
+draft: ${data.draft ?? false}
 ---
 
 ${data.content}

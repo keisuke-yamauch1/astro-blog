@@ -6,7 +6,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <div id="auth-check"></div>
 
   <div id="admin-content" class="hidden">
-    <h1 class="text-3xl font-bold mb-8">新規日記</h1>
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">新規日記</h1>
+      <a href="/admin/drafts" class="text-blue-600 hover:underline">下書き一覧</a>
+    </div>
 
     <form id="post-form" class="space-y-6">
       <!-- 日付 -->
@@ -48,13 +51,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <textarea id="markdown-editor"></textarea>
       </div>
 
-      <!-- 公開ボタン -->
-      <div>
+      <!-- ボタン -->
+      <div class="flex gap-4">
         <button
           type="submit"
           class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           公開
+        </button>
+        <button
+          type="button"
+          id="save-draft-btn"
+          class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          下書き保存
         </button>
       </div>
 
@@ -102,6 +112,62 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const form = document.getElementById('post-form') as HTMLFormElement;
     const statusDiv = document.getElementById('status')!;
 
+    // 下書き保存ボタン
+    const saveDraftBtn = document.getElementById('save-draft-btn');
+    saveDraftBtn?.addEventListener('click', async () => {
+      const date = (document.getElementById('date') as HTMLInputElement).value;
+      const title = (document.getElementById('title') as HTMLInputElement).value;
+      const condition = (document.getElementById('condition') as HTMLInputElement).value;
+      const content = editor.value();
+
+      if (!title || !content) {
+        statusDiv.textContent = 'タイトルと本文は必須です';
+        statusDiv.className = 'text-sm text-red-600';
+        return;
+      }
+
+      const postData = {
+        type: 'diary',
+        date,
+        title,
+        condition,
+        content,
+      };
+
+      try {
+        statusDiv.textContent = '下書き保存中...';
+        statusDiv.className = 'text-sm text-blue-600';
+
+        const response = await fetch('/admin/api/save-draft', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(postData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const year = date.split('-')[0];
+          const month = date.split('-')[1];
+          const day = date.split('-')[2];
+          const previewUrl = `/diary/${year}/${month}/${day}`;
+
+          statusDiv.innerHTML = `✓ ${result.message} <a href="${previewUrl}" class="underline" target="_blank">プレビューを見る</a>`;
+          statusDiv.className = 'text-sm text-green-600';
+        } else {
+          statusDiv.textContent = `エラー: ${result.error}`;
+          statusDiv.className = 'text-sm text-red-600';
+        }
+      } catch (error) {
+        statusDiv.textContent = `エラー: ${(error as Error).message}`;
+        statusDiv.className = 'text-sm text-red-600';
+      }
+    });
+
+    // フォーム送信（公開）
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
