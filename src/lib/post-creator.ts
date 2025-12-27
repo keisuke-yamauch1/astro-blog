@@ -77,6 +77,17 @@ async function getNextBlogId(): Promise<number> {
   return ids.length > 0 ? Math.max(...ids) + 1 : 1;
 }
 
+// 日記削除
+export function deleteDiaryPost(filename: string): void {
+  const filepath = path.join(process.cwd(), 'src/content/diary', filename);
+
+  if (!fs.existsSync(filepath)) {
+    throw new Error(`ファイルが見つかりません: ${filename}`);
+  }
+
+  fs.unlinkSync(filepath);
+}
+
 // ファイル名のサニタイズ
 function sanitizeFilename(title: string): string {
   return title

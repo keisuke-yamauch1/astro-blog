@@ -1,10 +1,19 @@
 import type { APIRoute } from 'astro';
-import { verifyPassword, generateToken } from '../../../lib/auth';
+import { verifyPassword, generateToken, isLocalhost } from '../../../lib/auth';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    // localhostの場合は認証をスキップ
+    if (isLocalhost(request)) {
+      const token = generateToken();
+      return new Response(JSON.stringify({ success: true, token, localhost: true }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const { password } = await request.json();
 
     // bcryptは非同期処理なのでawait必須

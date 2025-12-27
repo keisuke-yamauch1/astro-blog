@@ -1,19 +1,22 @@
 import type { APIRoute } from 'astro';
-import { verifyToken } from '../../../lib/auth';
-import { createDiaryPost } from '../../../lib/post-creator';
+import { verifyToken, isLocalhost } from '../../../lib/auth';
+import { createDiaryPost, deleteDiaryPost } from '../../../lib/post-creator';
 
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
-  // トークン検証
-  const authHeader = request.headers.get('Authorization');
-  const token = authHeader?.replace('Bearer ', '');
+  // localhostの場合は認証をスキップ
+  if (!isLocalhost(request)) {
+    // トークン検証
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.replace('Bearer ', '');
 
-  if (!token || !verifyToken(token)) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    if (!token || !verifyToken(token)) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   }
 
   try {
@@ -24,6 +27,16 @@ export const POST: APIRoute = async ({ request }) => {
       ...data,
       draft: true,
     });
+
+    // 古いファイルが指定されており、ファイル名が変わった場合は削除
+    if (data.oldFilename && data.oldFilename !== result.filename) {
+      try {
+        deleteDiaryPost(data.oldFilename);
+      } catch (error) {
+        console.warn('古いファイルの削除に失敗:', error);
+        // エラーは無視して処理を続行
+      }
+    }
 
     return new Response(JSON.stringify({
       success: true,

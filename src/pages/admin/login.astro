@@ -33,6 +33,31 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const form = document.getElementById('login-form') as HTMLFormElement;
     const errorDiv = document.getElementById('error') as HTMLDivElement;
 
+    // localhostの場合は自動ログイン
+    async function checkLocalhost() {
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        try {
+          const response = await fetch('/admin/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: '' })
+          });
+
+          const data = await response.json();
+
+          if (data.success && data.localhost) {
+            localStorage.setItem('admin_token', data.token);
+            window.location.href = '/admin';
+          }
+        } catch (error) {
+          console.error('Auto-login failed:', error);
+        }
+      }
+    }
+
+    // ページ読み込み時にlocalhostチェック
+    checkLocalhost();
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 

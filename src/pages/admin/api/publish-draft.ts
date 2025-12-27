@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { verifyToken } from '../../../lib/auth';
+import { verifyToken, isLocalhost } from '../../../lib/auth';
 import { execSync } from 'child_process';
 import path from 'path';
 import fs from 'fs';
@@ -7,15 +7,18 @@ import fs from 'fs';
 export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
-  // トークン検証
-  const authHeader = request.headers.get('Authorization');
-  const token = authHeader?.replace('Bearer ', '');
+  // localhostの場合は認証をスキップ
+  if (!isLocalhost(request)) {
+    // トークン検証
+    const authHeader = request.headers.get('Authorization');
+    const token = authHeader?.replace('Bearer ', '');
 
-  if (!token || !verifyToken(token)) {
-    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    if (!token || !verifyToken(token)) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   }
 
   try {

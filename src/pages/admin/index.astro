@@ -1,13 +1,49 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import fs from 'fs';
+import path from 'path';
+
+export const prerender = false;
+
+// URLパラメータから edit を取得
+const editFilename = Astro.url.searchParams.get('edit');
+let editData = null;
+
+if (editFilename) {
+  const filepath = path.join(process.cwd(), 'src/content/diary', editFilename);
+  if (fs.existsSync(filepath)) {
+    const fileContent = fs.readFileSync(filepath, 'utf-8');
+
+    // フロントマターと本文を分離
+    const frontmatterMatch = fileContent.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+    if (frontmatterMatch) {
+      const frontmatterText = frontmatterMatch[1];
+      const content = frontmatterMatch[2];
+
+      // フロントマターをパース（簡易版）
+      const titleMatch = frontmatterText.match(/^title:\s*(.+)$/m);
+      const dateMatch = frontmatterText.match(/^date:\s*(.+)$/m);
+      const conditionMatch = frontmatterText.match(/^condition:\s*(.+)$/m);
+
+      editData = {
+        title: titleMatch ? titleMatch[1] : '',
+        date: dateMatch ? dateMatch[1] : '',
+        condition: conditionMatch ? conditionMatch[1] : '',
+        content: content.trim()
+      };
+    }
+  }
+}
+
+const pageTitle = editData ? '日記を編集' : '新規日記';
 ---
 
-<BaseLayout title="管理画面">
+<BaseLayout title={`${pageTitle} | 管理画面`}>
   <div id="auth-check"></div>
 
   <div id="admin-content" class="hidden">
     <div class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold">新規日記</h1>
+      <h1 class="text-3xl font-bold">{pageTitle}</h1>
       <a href="/admin/drafts" class="text-blue-600 hover:underline">下書き一覧</a>
     </div>
 
@@ -72,8 +108,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </form>
   </div>
 
+  <!-- 編集データを埋め込む -->
+  <script is:inline define:vars={{ editData, editFilename }}>
+    window.__editData = editData;
+    window.__editFilename = editFilename;
+  </script>
+
   <script>
     import EasyMDE from 'easymde';
+
+    // 編集データを取得
+    const editData = window.__editData;
+    const editFilename = window.__editFilename;
 
     // 認証チェック
     const token = localStorage.getItem('admin_token');
@@ -86,7 +132,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     // 日付フィールドのデフォルト値を今日に設定
     const dateInput = document.getElementById('date') as HTMLInputElement;
     const today = new Date().toISOString().split('T')[0];
-    dateInput.value = today;
+
+    // 編集モードの場合はデフォルト値をセット
+    if (editData) {
+      dateInput.value = editData.date;
+    } else {
+      dateInput.value = today;
+    }
 
     // EasyMDE初期化（モバイル最適化）
     const editor = new EasyMDE({
@@ -103,10 +155,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       autoDownloadFontAwesome: true,
       autosave: {
         enabled: true,
-        uniqueId: 'admin-editor',
+        // 編集モードと新規作成モードで異なるuniqueIdを使用
+        uniqueId: editFilename ? `admin-editor-edit-${editFilename}` : 'admin-editor-new',
         delay: 1000,
       },
     });
+
+    // 編集モードの場合、フォームに値を設定
+    if (editData) {
+      document.getElementById('title').value = editData.title;
+      document.getElementById('condition').value = editData.condition || '';
+      editor.value(editData.content);
+    }
 
     // フォーム送信
     const form = document.getElementById('post-form') as HTMLFormElement;
@@ -132,6 +192,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         title,
         condition,
         content,
+        oldFilename: editFilename || undefined,
       };
 
       try {
@@ -182,6 +243,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         title,
         condition,
         content,
+        oldFilename: editFilename || undefined,
       };
 
       try {
