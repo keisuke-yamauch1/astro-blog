@@ -5,6 +5,7 @@ import { siteConfig } from './src/config';
 import { visit } from 'unist-util-visit';
 import mdx from '@astrojs/mdx';
 import embeds from 'astro-embed/integration';
+import vercel from '@astrojs/vercel';
 
 import sitemap from '@astrojs/sitemap';
 
@@ -59,6 +60,7 @@ function rehypeImageNotProse() {
 
 export default defineConfig({
   site: siteConfig.site,
+  adapter: vercel(),
   integrations: [tailwind(), embeds({
     // Configure YouTube to use English UI
     services: {

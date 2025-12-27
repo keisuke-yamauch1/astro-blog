@@ -1,0 +1,224 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="管理画面">
+  <div id="auth-check"></div>
+
+  <div id="admin-content" class="hidden">
+    <h1 class="text-3xl font-bold mb-8">新規投稿</h1>
+
+    <form id="post-form" class="space-y-6">
+      <!-- コンテンツタイプ -->
+      <div>
+        <label class="block mb-2">コンテンツタイプ:</label>
+        <select
+          id="content-type"
+          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
+        >
+          <option value="blog">ブログ</option>
+          <option value="diary">日記</option>
+        </select>
+      </div>
+
+      <!-- タイトル -->
+      <div>
+        <label for="title" class="block mb-2">タイトル: *</label>
+        <input
+          type="text"
+          id="title"
+          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
+          required
+        />
+      </div>
+
+      <!-- ブログのみ: 説明文 -->
+      <div id="description-field">
+        <label for="description" class="block mb-2">説明文:</label>
+        <input
+          type="text"
+          id="description"
+          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
+        />
+      </div>
+
+      <!-- ブログのみ: タグ -->
+      <div id="tags-field">
+        <label for="tags" class="block mb-2">タグ（カンマ区切り）:</label>
+        <input
+          type="text"
+          id="tags"
+          placeholder="astro, typescript"
+          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
+        />
+      </div>
+
+      <!-- 日記のみ: 天気 -->
+      <div id="weather-field" class="hidden">
+        <label for="weather" class="block mb-2">天気:</label>
+        <input
+          type="text"
+          id="weather"
+          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
+        />
+      </div>
+
+      <!-- 日記のみ: コンディション -->
+      <div id="condition-field" class="hidden">
+        <label for="condition" class="block mb-2">コンディション:</label>
+        <input
+          type="text"
+          id="condition"
+          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
+        />
+      </div>
+
+      <!-- Markdownエディタ -->
+      <div>
+        <label class="block mb-2">本文: *</label>
+        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+        <textarea id="markdown-editor"></textarea>
+      </div>
+
+      <!-- 送信ボタン -->
+      <div class="flex gap-4">
+        <button
+          type="submit"
+          name="action"
+          value="publish"
+          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          公開
+        </button>
+        <button
+          type="submit"
+          name="action"
+          value="draft"
+          class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          下書きで保存
+        </button>
+      </div>
+
+      <div id="status" class="text-sm"></div>
+    </form>
+  </div>
+
+  <script>
+    import EasyMDE from 'easymde';
+
+    // 認証チェック
+    const token = localStorage.getItem('admin_token');
+    if (!token) {
+      window.location.href = '/admin/login';
+    }
+
+    document.getElementById('admin-content')?.classList.remove('hidden');
+
+    // EasyMDE初期化（モバイル最適化）
+    const editor = new EasyMDE({
+      element: document.getElementById('markdown-editor') as HTMLTextAreaElement,
+      spellChecker: false,
+      placeholder: 'ここに本文を書く...',
+      status: false,  // モバイルで画面を広く使う
+      toolbar: [
+        'bold', 'italic', 'heading', '|',
+        'quote', 'unordered-list', 'ordered-list', '|',
+        'link', 'image', '|',
+        'preview', 'fullscreen'  // side-by-sideを削除（モバイル非推奨）
+      ],
+      autoDownloadFontAwesome: true,
+      autosave: {
+        enabled: true,
+        uniqueId: 'admin-editor',
+        delay: 1000,
+      },
+    });
+
+    // コンテンツタイプ切り替え
+    const contentType = document.getElementById('content-type') as HTMLSelectElement;
+    const descField = document.getElementById('description-field')!;
+    const tagsField = document.getElementById('tags-field')!;
+    const weatherField = document.getElementById('weather-field')!;
+    const conditionField = document.getElementById('condition-field')!;
+
+    contentType.addEventListener('change', () => {
+      if (contentType.value === 'blog') {
+        descField.classList.remove('hidden');
+        tagsField.classList.remove('hidden');
+        weatherField.classList.add('hidden');
+        conditionField.classList.add('hidden');
+      } else {
+        descField.classList.add('hidden');
+        tagsField.classList.add('hidden');
+        weatherField.classList.remove('hidden');
+        conditionField.classList.remove('hidden');
+      }
+    });
+
+    // フォーム送信
+    const form = document.getElementById('post-form') as HTMLFormElement;
+    const statusDiv = document.getElementById('status')!;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitter = (e.submitter as HTMLButtonElement)?.value;
+      const isDraft = submitter === 'draft';
+
+      const type = contentType.value;
+      const title = (document.getElementById('title') as HTMLInputElement).value;
+      const content = editor.value();
+
+      const postData: any = {
+        type,
+        title,
+        content,
+      };
+
+      if (type === 'blog') {
+        const description = (document.getElementById('description') as HTMLInputElement).value;
+        const tagsInput = (document.getElementById('tags') as HTMLInputElement).value;
+        postData.description = description;
+        postData.tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
+        postData.draft = isDraft;
+      } else {
+        const weather = (document.getElementById('weather') as HTMLInputElement).value;
+        const condition = (document.getElementById('condition') as HTMLInputElement).value;
+        postData.weather = weather;
+        postData.condition = condition;
+      }
+
+      try {
+        statusDiv.textContent = '保存中...';
+        statusDiv.className = 'text-sm text-blue-600';
+
+        const response = await fetch('/admin/api/create-post', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(postData)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          statusDiv.textContent = `✓ 保存成功: ${result.filename}`;
+          statusDiv.className = 'text-sm text-green-600';
+
+          // フォームリセット
+          form.reset();
+          editor.value('');
+        } else {
+          statusDiv.textContent = `エラー: ${result.error}`;
+          statusDiv.className = 'text-sm text-red-600';
+        }
+      } catch (error) {
+        statusDiv.textContent = `エラー: ${(error as Error).message}`;
+        statusDiv.className = 'text-sm text-red-600';
+      }
+    });
+  </script>
+</BaseLayout>
