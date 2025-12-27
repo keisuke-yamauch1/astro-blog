@@ -1,11 +1,13 @@
 ---
 import { getCollection } from 'astro:content';
 import DiaryPost from '../../../../layouts/DiaryPost.astro';
+import { filterPublishedDiaries } from '../../../../utils/posts';
 
 export async function getStaticPaths() {
   const entries = await getCollection('diary');
+  const publishedEntries = filterPublishedDiaries(entries);
 
-  return entries.map((entry) => {
+  return publishedEntries.map((entry) => {
     const date = entry.data.date;
     const year = date.getFullYear().toString();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');

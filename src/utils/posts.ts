@@ -82,3 +82,30 @@ export function filterEmonicles(posts: CollectionEntry<'emonicle'>[], filter: Em
 
   return filteredPosts;
 }
+
+// Diary utility functions
+export function sortDiariesByDate(entries: CollectionEntry<'diary'>[]): CollectionEntry<'diary'>[] {
+  return entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+}
+
+export function filterPublishedDiaries(entries: CollectionEntry<'diary'>[]): CollectionEntry<'diary'>[] {
+  return entries.filter(entry => !entry.data.draft && isPublished(entry.data.date));
+}
+
+export interface DiaryFilter {
+  maxEntries?: number;
+}
+
+export function filterDiaries(entries: CollectionEntry<'diary'>[], filter: DiaryFilter = {}): CollectionEntry<'diary'>[] {
+  let filteredEntries = filterPublishedDiaries(entries);
+
+  // Sort entries by date
+  filteredEntries = sortDiariesByDate(filteredEntries);
+
+  // Limit number of entries if maxEntries is specified
+  if (filter.maxEntries) {
+    filteredEntries = filteredEntries.slice(0, filter.maxEntries);
+  }
+
+  return filteredEntries;
+}

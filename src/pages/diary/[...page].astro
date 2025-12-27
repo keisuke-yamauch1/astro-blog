@@ -3,10 +3,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import DiaryPreview from '../../components/DiaryPreview.astro';
 import Pagination from '../../components/Pagination.astro';
 import { getCollection } from 'astro:content';
+import { sortDiariesByDate, filterPublishedDiaries } from '../../utils/posts';
 
 export async function getStaticPaths({ paginate }) {
   const entries = await getCollection('diary');
-  const sortedEntries = entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  const publishedEntries = filterPublishedDiaries(entries);
+  const sortedEntries = sortDiariesByDate(publishedEntries);
 
   return paginate(sortedEntries, { pageSize: 10 });
 }
