@@ -6,21 +6,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   <div id="auth-check"></div>
 
   <div id="admin-content" class="hidden">
-    <h1 class="text-3xl font-bold mb-8">新規投稿</h1>
+    <h1 class="text-3xl font-bold mb-8">新規日記</h1>
 
     <form id="post-form" class="space-y-6">
-      <!-- コンテンツタイプ -->
-      <div>
-        <label class="block mb-2">コンテンツタイプ:</label>
-        <select
-          id="content-type"
-          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
-        >
-          <option value="blog">ブログ</option>
-          <option value="diary">日記</option>
-        </select>
-      </div>
-
       <!-- タイトル -->
       <div>
         <label for="title" class="block mb-2">タイトル: *</label>
@@ -32,29 +20,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         />
       </div>
 
-      <!-- ブログのみ: 説明文 -->
-      <div id="description-field">
-        <label for="description" class="block mb-2">説明文:</label>
-        <input
-          type="text"
-          id="description"
-          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
-        />
-      </div>
-
-      <!-- ブログのみ: タグ -->
-      <div id="tags-field">
-        <label for="tags" class="block mb-2">タグ（カンマ区切り）:</label>
-        <input
-          type="text"
-          id="tags"
-          placeholder="astro, typescript"
-          class="w-full px-4 py-2 border rounded dark:bg-gray-800 dark:border-gray-700"
-        />
-      </div>
-
-      <!-- 日記のみ: 天気 -->
-      <div id="weather-field" class="hidden">
+      <!-- 天気 -->
+      <div>
         <label for="weather" class="block mb-2">天気:</label>
         <input
           type="text"
@@ -63,8 +30,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         />
       </div>
 
-      <!-- 日記のみ: コンディション -->
-      <div id="condition-field" class="hidden">
+      <!-- コンディション -->
+      <div>
         <label for="condition" class="block mb-2">コンディション:</label>
         <input
           type="text"
@@ -80,23 +47,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <textarea id="markdown-editor"></textarea>
       </div>
 
-      <!-- 送信ボタン -->
-      <div class="flex gap-4">
+      <!-- 公開ボタン -->
+      <div>
         <button
           type="submit"
-          name="action"
-          value="publish"
           class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           公開
-        </button>
-        <button
-          type="submit"
-          name="action"
-          value="draft"
-          class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-        >
-          下書きで保存
         </button>
       </div>
 
@@ -125,7 +82,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         'bold', 'italic', 'heading', '|',
         'quote', 'unordered-list', 'ordered-list', '|',
         'link', 'image', '|',
-        'preview', 'fullscreen'  // side-by-sideを削除（モバイル非推奨）
+        'preview', 'fullscreen'
       ],
       autoDownloadFontAwesome: true,
       autosave: {
@@ -135,27 +92,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       },
     });
 
-    // コンテンツタイプ切り替え
-    const contentType = document.getElementById('content-type') as HTMLSelectElement;
-    const descField = document.getElementById('description-field')!;
-    const tagsField = document.getElementById('tags-field')!;
-    const weatherField = document.getElementById('weather-field')!;
-    const conditionField = document.getElementById('condition-field')!;
-
-    contentType.addEventListener('change', () => {
-      if (contentType.value === 'blog') {
-        descField.classList.remove('hidden');
-        tagsField.classList.remove('hidden');
-        weatherField.classList.add('hidden');
-        conditionField.classList.add('hidden');
-      } else {
-        descField.classList.add('hidden');
-        tagsField.classList.add('hidden');
-        weatherField.classList.remove('hidden');
-        conditionField.classList.remove('hidden');
-      }
-    });
-
     // フォーム送信
     const form = document.getElementById('post-form') as HTMLFormElement;
     const statusDiv = document.getElementById('status')!;
@@ -163,34 +99,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const submitter = (e.submitter as HTMLButtonElement)?.value;
-      const isDraft = submitter === 'draft';
-
-      const type = contentType.value;
       const title = (document.getElementById('title') as HTMLInputElement).value;
+      const weather = (document.getElementById('weather') as HTMLInputElement).value;
+      const condition = (document.getElementById('condition') as HTMLInputElement).value;
       const content = editor.value();
 
-      const postData: any = {
-        type,
+      const postData = {
+        type: 'diary',
         title,
+        weather,
+        condition,
         content,
       };
 
-      if (type === 'blog') {
-        const description = (document.getElementById('description') as HTMLInputElement).value;
-        const tagsInput = (document.getElementById('tags') as HTMLInputElement).value;
-        postData.description = description;
-        postData.tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
-        postData.draft = isDraft;
-      } else {
-        const weather = (document.getElementById('weather') as HTMLInputElement).value;
-        const condition = (document.getElementById('condition') as HTMLInputElement).value;
-        postData.weather = weather;
-        postData.condition = condition;
-      }
-
       try {
-        statusDiv.textContent = '保存中...';
+        statusDiv.textContent = '公開中...';
         statusDiv.className = 'text-sm text-blue-600';
 
         const response = await fetch('/admin/api/create-post', {
@@ -205,7 +128,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         const result = await response.json();
 
         if (result.success) {
-          statusDiv.textContent = `✓ 保存成功: ${result.filename}`;
+          statusDiv.textContent = `✓ 公開成功: ${result.filename}`;
           statusDiv.className = 'text-sm text-green-600';
 
           // フォームリセット
