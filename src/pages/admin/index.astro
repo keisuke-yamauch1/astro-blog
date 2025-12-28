@@ -125,8 +125,26 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
     import EasyMDE from 'easymde';
 
     // 編集データを取得
-    const editData = window.__editData;
+    let editData = window.__editData;
     const editFilename = window.__editFilename;
+
+    // セッションストレージから復元を試みる（プレビュー後の編集に戻る場合）
+    // editDataから日付を取得して、日付ベースのキーで復元
+    if (editData && editData.date) {
+      const storageKey = `admin-editor-original-${editData.date}`;
+      const storedData = sessionStorage.getItem(storageKey);
+
+      if (storedData) {
+        try {
+          const restoredData = JSON.parse(storedData);
+          editData = restoredData;
+          console.log('✓ Restored from sessionStorage (date-based):', editData.date);
+        } catch (e) {
+          console.warn('Failed to parse sessionStorage data', e);
+          // パース失敗時はサーバーから取得したデータを使用
+        }
+      }
+    }
 
     // 認証チェック
     const token = localStorage.getItem('admin_token');
@@ -255,6 +273,18 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
       const condition = (document.getElementById('condition') as HTMLInputElement).value;
       const content = editor.value();
 
+      // プレビュー前に元のコンテンツをセッションストレージに保存
+      // 日付ベースのキーを使用（ファイル名変更に影響されない）
+      const storageKey = `admin-editor-original-${date}`;
+      sessionStorage.setItem(storageKey, JSON.stringify({
+        title: title,
+        date: date,
+        condition: condition,
+        content: content,
+        timestamp: Date.now()
+      }));
+      console.log('✓ Saved to sessionStorage (date-based):', date);
+
       if (!title || !content) {
         statusDiv.textContent = 'タイトルと本文は必須です';
         statusDiv.className = 'text-sm text-red-600';
@@ -337,6 +367,15 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
         if (result.success) {
           statusDiv.textContent = `✓ 公開成功: ${result.filename}`;
           statusDiv.className = 'text-sm text-green-600';
+
+          // セッションストレージをクリア（日付ベース）
+          const storageKey = `admin-editor-original-${date}`;
+          sessionStorage.removeItem(storageKey);
+          console.log('✓ Cleared sessionStorage (date-based):', date);
+
+          // EasyMDEの自動保存もクリア
+          const autosaveKey = editFilename ? `admin-editor-edit-${editFilename}` : 'admin-editor-new';
+          localStorage.removeItem(autosaveKey);
 
           // フォームリセット
           form.reset();
