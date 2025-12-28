@@ -6,8 +6,22 @@ import { visit } from 'unist-util-visit';
 import mdx from '@astrojs/mdx';
 import embeds from 'astro-embed/integration';
 import vercel from '@astrojs/vercel';
+import remarkBreaks from 'remark-breaks';
 
 import sitemap from '@astrojs/sitemap';
+
+// Custom remark plugin to apply remark-breaks only to diary collection
+function remarkBreaksForDiary() {
+  return (tree, file) => {
+    const filePath = file.path || file.history[file.history.length - 1] || '';
+
+    // Apply remark-breaks only to files in /content/diary/
+    if (filePath.includes('/content/diary/')) {
+      const breaksPlugin = remarkBreaks();
+      return breaksPlugin(tree, file);
+    }
+  };
+}
 
 // Custom rehype plugin to add target="_blank" to all links
 function rehypeTargetBlank() {
@@ -73,6 +87,7 @@ export default defineConfig({
     }
   }), sitemap(), mdx()],
   markdown: {
+    remarkPlugins: [remarkBreaksForDiary],
     rehypePlugins: [
       [rehypePrettyCode, {
         theme: {

@@ -159,6 +159,11 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
         uniqueId: editFilename ? `admin-editor-edit-${editFilename}` : 'admin-editor-new',
         delay: 1000,
       },
+      previewRender: function(plainText) {
+        // プレビューでも改行を<br>に変換（日記用）
+        // 段落の区切り（ダブル改行）を保持しつつ、単一改行を<br>に変換
+        return this.parent.markdown(plainText.replace(/\n/g, '  \n'));
+      }
     });
 
     // 編集モードの場合、フォームに値を設定
