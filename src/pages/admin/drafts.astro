@@ -29,7 +29,7 @@ const drafts = (await getCollection('diary', (entry) => entry.data.draft === tru
           const year = date.getFullYear().toString();
           const month = (date.getMonth() + 1).toString().padStart(2, '0');
           const day = date.getDate().toString().padStart(2, '0');
-          const previewUrl = `/diary/${year}/${month}/${day}`;
+          const previewUrl = `/admin/preview/diary/${year}/${month}/${day}`;
 
           return (
             <div class="border rounded-lg p-6 dark:border-gray-700">

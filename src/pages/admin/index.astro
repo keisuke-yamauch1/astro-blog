@@ -97,6 +97,13 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
         </button>
         <button
           type="button"
+          id="preview-btn"
+          class="px-6 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+        >
+          プレビュー
+        </button>
+        <button
+          type="button"
           id="save-draft-btn"
           class="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
         >
@@ -219,10 +226,71 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
           const year = date.split('-')[0];
           const month = date.split('-')[1];
           const day = date.split('-')[2];
-          const previewUrl = `/diary/${year}/${month}/${day}`;
+          const previewUrl = `/admin/preview/diary/${year}/${month}/${day}`;
 
           statusDiv.innerHTML = `✓ ${result.message} <a href="${previewUrl}" class="underline" target="_blank">プレビューを見る</a>`;
           statusDiv.className = 'text-sm text-green-600';
+        } else {
+          statusDiv.textContent = `エラー: ${result.error}`;
+          statusDiv.className = 'text-sm text-red-600';
+        }
+      } catch (error) {
+        statusDiv.textContent = `エラー: ${(error as Error).message}`;
+        statusDiv.className = 'text-sm text-red-600';
+      }
+    });
+
+    // プレビューボタン
+    const previewBtn = document.getElementById('preview-btn');
+    previewBtn?.addEventListener('click', async () => {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        alert('認証トークンが見つかりません。ログインしてください。');
+        window.location.href = '/admin/login';
+        return;
+      }
+
+      const date = (document.getElementById('date') as HTMLInputElement).value;
+      const title = (document.getElementById('title') as HTMLInputElement).value;
+      const condition = (document.getElementById('condition') as HTMLInputElement).value;
+      const content = editor.value();
+
+      if (!title || !content) {
+        statusDiv.textContent = 'タイトルと本文は必須です';
+        statusDiv.className = 'text-sm text-red-600';
+        return;
+      }
+
+      try {
+        statusDiv.textContent = 'プレビューを準備中...';
+        statusDiv.className = 'text-sm text-gray-600';
+
+        // 既存の下書き保存APIを使用（一時的な下書きとして保存）
+        const response = await fetch('/admin/api/save-draft', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            date,
+            title,
+            condition,
+            content
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          const [year, month, day] = date.split('-');
+          const previewUrl = `/admin/preview/diary/${year}/${month}/${day}`;
+
+          // 新しいタブでプレビューを開く
+          window.open(previewUrl, '_blank');
+
+          statusDiv.textContent = '';
+          statusDiv.className = '';
         } else {
           statusDiv.textContent = `エラー: ${result.error}`;
           statusDiv.className = 'text-sm text-red-600';

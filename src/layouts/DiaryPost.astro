@@ -5,16 +5,17 @@ import type { CollectionEntry } from 'astro:content'
 
 interface Props {
   entry: CollectionEntry<'diary'>
+  isPreview?: boolean
 }
 
-const { entry } = Astro.props
+const { entry, isPreview = false } = Astro.props
 const { title, date, weather, condition, image, draft } = entry.data
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <BaseLayout title={title}>
   <article class="max-w-3xl mx-auto px-4">
-    {draft && (
+    {draft && !isPreview && (
       <div class="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 mb-8 rounded">
         <p class="text-yellow-800 dark:text-yellow-200">
           <strong>下書き:</strong> この記事はまだ公開されていません。
