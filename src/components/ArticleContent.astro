@@ -1,0 +1,42 @@
+---
+import HatenaStar from './HatenaStar.astro';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={[
+    "prose prose-lg dark:prose-invert",
+    "prose-headings:text-gray-900 dark:prose-headings:text-gray-100",
+    "prose-p:text-gray-700 dark:prose-p:text-gray-300",
+    "prose-a:text-primary-600 dark:prose-a:text-primary-400",
+    "hover:prose-a:text-primary-500 dark:hover:prose-a:text-primary-300",
+    "prose-strong:text-gray-900 dark:prose-strong:text-gray-100",
+    "prose-code:text-gray-900 dark:prose-code:text-gray-900",
+    "prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300",
+    "prose-span:text-gray-700 dark:prose-span:text-gray-300",
+    "prose-li:text-gray-700 dark:prose-li:text-gray-300",
+    "max-w-none",
+    className
+  ]}
+>
+  <slot />
+  <HatenaStar />
+</div>
+
+<style>
+  /* コードブロックの背景色を調整 */
+  :global(.astro-code) {
+    background-color: rgb(243, 244, 246) !important;
+    color: rgb(17, 24, 39) !important;
+  }
+
+  :global(.dark .astro-code) {
+    background-color: rgb(243, 244, 246) !important;
+    color: rgb(17, 24, 39) !important;
+  }
+</style>

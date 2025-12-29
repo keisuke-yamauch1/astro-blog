@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
 import { filterPublishedPosts } from '../../utils/posts';
+import { validateIdPost } from '../../utils/validation';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
@@ -17,7 +18,7 @@ const { id } = Astro.params;
 const { post } = Astro.props;
 
 // Validate that the ID exists and matches the post
-if (!post || post.data.id.toString() !== id) {
+if (!validateIdPost(post, id)) {
   return Astro.redirect('/404');
 }
 

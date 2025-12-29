@@ -2,23 +2,17 @@
 import { getCollection } from 'astro:content';
 import DiaryPost from '../../../../layouts/DiaryPost.astro';
 import { filterPublishedDiaries } from '../../../../utils/posts';
+import { getDateParts, matchesDateParts } from '../../../../utils/date';
 
 export async function getStaticPaths() {
   const entries = await getCollection('diary');
   const publishedEntries = filterPublishedDiaries(entries);
 
   return publishedEntries.map((entry) => {
-    const date = entry.data.date;
-    const year = date.getFullYear().toString();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
+    const { year, month, day } = getDateParts(entry.data.date);
 
     return {
-      params: {
-        year,
-        month,
-        day,
-      },
+      params: { year, month, day },
       props: { entry },
     };
   });
@@ -28,12 +22,7 @@ const { year, month, day } = Astro.params;
 const { entry } = Astro.props;
 
 // Validate that the entry matches the date
-const entryDate = entry.data.date;
-const entryYear = entryDate.getFullYear().toString();
-const entryMonth = (entryDate.getMonth() + 1).toString().padStart(2, '0');
-const entryDay = entryDate.getDate().toString().padStart(2, '0');
-
-if (year !== entryYear || month !== entryMonth || day !== entryDay) {
+if (!matchesDateParts(entry.data.date, { year, month, day })) {
   return Astro.redirect('/404');
 }
 

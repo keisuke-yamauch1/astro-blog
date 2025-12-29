@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import DiaryPost from '../../../../../../layouts/DiaryPost.astro';
 import PreviewBanner from '../../../../../../components/PreviewBanner.astro';
+import { matchesDateParts } from '../../../../../../utils/date';
 
 export const prerender = false;
 
@@ -27,22 +28,18 @@ console.log('Relevant diaries (including all drafts):', relevantDiaries.map(d =>
 })));
 console.log('URL params:', { year, month, day });
 
-// URLパラメータと一致する日記を検索（堅牢な日付マッチング）
+// URLパラメータと一致する日記を検索
 const entry = allDiaries.find((diary) => {
   const diaryDate = diary.data.date;
 
   // Dateオブジェクトの場合
   if (diaryDate instanceof Date) {
-    const diaryYear = diaryDate.getFullYear().toString();
-    const diaryMonth = (diaryDate.getMonth() + 1).toString().padStart(2, '0');
-    const diaryDay = diaryDate.getDate().toString().padStart(2, '0');
-
-    const matches = diaryYear === year && diaryMonth === month && diaryDay === day;
+    const matches = matchesDateParts(diaryDate, { year, month, day });
     if (matches) console.log('Matched entry (Date):', diary.id);
     return matches;
   }
 
-  // 文字列の場合
+  // 文字列の場合（フォールバック）
   if (typeof diaryDate === 'string') {
     const matches = diaryDate === `${year}-${month}-${day}`;
     if (matches) console.log('Matched entry (string):', diary.id);

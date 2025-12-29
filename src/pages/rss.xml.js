@@ -2,6 +2,7 @@ import rss from '@astrojs/rss';
 import { siteConfig } from '../config';
 import { getCollection } from 'astro:content';
 import { filterPublishedEmonicles } from '../utils/posts';
+import { getDiaryPath } from '../utils/date';
 
 export async function GET(context) {
   const blogCollection = 'blog';
@@ -19,7 +20,7 @@ export async function GET(context) {
   const diaryItems = diary.map((post) => ({
       title: post.data.title,
       description: post.data.title,
-      link: context.site + diaryCollection + '/' + post.data.date.getFullYear() + '/' + (post.data.date.getMonth() + 1).toString().padStart(2, '0') + '/' + post.data.date.getDate().toString().padStart(2, '0'),
+      link: context.site + getDiaryPath(post.data.date).slice(1), // Remove leading slash
       pubDate: post.data.date,
       content: post.body
   }));

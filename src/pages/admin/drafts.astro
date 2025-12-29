@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { getDateParts } from '../../utils/date';
 
 export const prerender = false;
 
@@ -26,9 +27,7 @@ const drafts = (await getCollection('diary', (entry) => entry.data.draft === tru
       <div class="space-y-4">
         {drafts.map((entry) => {
           const date = entry.data.date;
-          const year = date.getFullYear().toString();
-          const month = (date.getMonth() + 1).toString().padStart(2, '0');
-          const day = date.getDate().toString().padStart(2, '0');
+          const { year, month, day } = getDateParts(date);
           const previewUrl = `/admin/preview/diary/${year}/${month}/${day}`;
 
           return (
