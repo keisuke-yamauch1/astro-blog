@@ -34,6 +34,7 @@
     "astro-google-analytics": "^1.0.3",
     "bcrypt": "^6.0.0",
     "easymde": "^2.20.0",
+    "fast-xml-parser": "^5.3.3",
     "jsonwebtoken": "^9.0.3",
     "octokit": "^3.2.2",
     "rehype-pretty-code": "^0.14.0",

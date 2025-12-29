@@ -74,6 +74,7 @@ function rehypeImageNotProse() {
 
 export default defineConfig({
   site: siteConfig.site,
+  output: 'hybrid',
   adapter: vercel(),
   integrations: [tailwind(), embeds({
     // Configure YouTube to use English UI
