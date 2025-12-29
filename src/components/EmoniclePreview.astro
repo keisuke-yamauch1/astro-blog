@@ -11,7 +11,7 @@ const { post } = Astro.props;
 const { title, description, date, image } = post.data;
 ---
 
-<PreviewCard href={`/emonicle/${post.data.id}`} title={title} image={image}>
+<PreviewCard href={`/emonicle/${post.data.id}`} title={title} image={image} showMarginBottom={false}>
   <div slot="meta" class="mb-4">
     <PostDate date={date} />
   </div>
