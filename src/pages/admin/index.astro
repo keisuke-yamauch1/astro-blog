@@ -129,8 +129,8 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
     const editFilename = window.__editFilename;
 
     // セッションストレージから復元を試みる（プレビュー後の編集に戻る場合）
-    // editDataから日付を取得して、日付ベースのキーで復元
     if (editData && editData.date) {
+      // 編集モード: 日付ベースのキーで復元
       const storageKey = `admin-editor-original-${editData.date}`;
       const storedData = sessionStorage.getItem(storageKey);
 
@@ -142,6 +142,18 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
         } catch (e) {
           console.warn('Failed to parse sessionStorage data', e);
           // パース失敗時はサーバーから取得したデータを使用
+        }
+      }
+    } else if (!editData) {
+      // 新規作成モード: プレビュー用のキーから復元
+      const storedData = sessionStorage.getItem('admin-editor-preview-new');
+      if (storedData) {
+        try {
+          editData = JSON.parse(storedData);
+          sessionStorage.removeItem('admin-editor-preview-new');
+          console.log('✓ Restored from sessionStorage (new mode):', editData.date);
+        } catch (e) {
+          console.warn('Failed to parse sessionStorage data', e);
         }
       }
     }
@@ -276,14 +288,21 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
       // プレビュー前に元のコンテンツをセッションストレージに保存
       // 日付ベースのキーを使用（ファイル名変更に影響されない）
       const storageKey = `admin-editor-original-${date}`;
-      sessionStorage.setItem(storageKey, JSON.stringify({
+      const dataToStore = {
         title: title,
         date: date,
         condition: condition,
         content: content,
         timestamp: Date.now()
-      }));
+      };
+      sessionStorage.setItem(storageKey, JSON.stringify(dataToStore));
       console.log('✓ Saved to sessionStorage (date-based):', date);
+
+      // 新規作成モードの場合、追加のキーでも保存（ページリロード時の復元用）
+      if (!editFilename) {
+        sessionStorage.setItem('admin-editor-preview-new', JSON.stringify(dataToStore));
+        console.log('✓ Saved to sessionStorage (new mode)');
+      }
 
       if (!title || !content) {
         statusDiv.textContent = 'タイトルと本文は必須です';
@@ -371,7 +390,8 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
           // セッションストレージをクリア（日付ベース）
           const storageKey = `admin-editor-original-${date}`;
           sessionStorage.removeItem(storageKey);
-          console.log('✓ Cleared sessionStorage (date-based):', date);
+          sessionStorage.removeItem('admin-editor-preview-new');
+          console.log('✓ Cleared sessionStorage:', date);
 
           // EasyMDEの自動保存もクリア
           const autosaveKey = editFilename ? `admin-editor-edit-${editFilename}` : 'admin-editor-new';
