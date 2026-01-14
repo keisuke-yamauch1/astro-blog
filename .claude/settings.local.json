@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:hacktk.net)",
+      "WebFetch(domain:www.kechiiiiin.com)",
+      "WebFetch(domain:hatena.zendesk.com)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:s.hatena.ne.jp)",
+      "Bash(npm run dev:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:help.hatenablog.com)",
+      "WebFetch(domain:www.yuuan.net)",
+      "WebFetch(domain:unageanu.hatenablog.com)",
+      "WebFetch(domain:star.hatenastaff.com)",
+      "mcp__gemini-cli__ask-gemini"
+    ],
+    "deny": []
+  }
+}
