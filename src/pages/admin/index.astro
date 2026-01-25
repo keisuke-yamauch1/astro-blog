@@ -203,11 +203,28 @@ const pageTitle = editData ? '日記を編集' : '新規日記';
       }
     });
 
+    // デフォルトテンプレート（新規作成時用）
+    const defaultTemplate = `
+
+## 体調
+
+## 見たり聞いたり読んだり
+
+## 公開
+`;
+
     // 編集モードの場合、フォームに値を設定
     if (editData) {
       document.getElementById('title').value = editData.title;
       document.getElementById('condition').value = editData.condition || '';
       editor.value(editData.content);
+    } else {
+      // 新規作成モード: autosaveデータがなければテンプレートを適用
+      const autosaveKey = 'smde_admin-editor-new';
+      const hasAutosave = localStorage.getItem(autosaveKey);
+      if (!hasAutosave) {
+        editor.value(defaultTemplate);
+      }
     }
 
     // フォーム送信
