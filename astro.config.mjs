@@ -26,7 +26,7 @@ export default defineConfig({
       },
       Tweet: true,
       Vimeo: true,
-      LinkPreview: true
+      LinkPreview: false
     }
   }), sitemap(), mdx()],
   markdown: {
