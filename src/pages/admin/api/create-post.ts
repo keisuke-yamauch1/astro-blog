@@ -2,30 +2,11 @@ import type { APIRoute } from 'astro';
 import { verifyToken, isLocalhost } from '../../../lib/auth';
 import { createDiaryPost, deleteDiaryPost } from '../../../lib/post-creator';
 import { createFile, updateFile, deleteFile, getFileContent, GitHubAPIError } from '../../../lib/github-client';
+import { generateDiaryContent, generateDiaryFilename } from '../../../lib/diary-utils';
 import { execSync } from 'child_process';
 import path from 'path';
 
 export const prerender = false;
-
-// フロントマターとコンテンツを生成
-function generateDiaryContent(data: any, date: string, sanitizedTitle: string) {
-  return `---
-title: ${data.title}
-date: ${date}
-draft: ${data.draft ?? false}
----
-
-${data.content}
-`;
-}
-
-// タイトルをファイル名用にサニタイズ
-function sanitizeTitle(title: string): string {
-  return title
-    .replace(/[\/\\:*?"<>|]/g, '')
-    .replace(/\s+/g, '_')
-    .substring(0, 50);
-}
 
 // localhost環境用の処理（従来の実装）
 async function handleLocalCreate(data: any) {
@@ -78,10 +59,14 @@ async function handleLocalCreate(data: any) {
 async function handleGitHubCreate(data: any) {
   try {
     const date = data.date || new Date().toISOString().split('T')[0];
-    const sanitizedTitle = sanitizeTitle(data.title);
-    const filename = `${date}_${sanitizedTitle}.md`;
+    const filename = generateDiaryFilename(date, data.title);
     const githubPath = `src/content/diary/${filename}`;
-    const content = generateDiaryContent(data, date, sanitizedTitle);
+    const content = generateDiaryContent({
+      title: data.title,
+      date,
+      content: data.content,
+      draft: data.draft ?? false,
+    });
 
     // 古いファイルを削除（該当する場合）
     if (data.oldFilename && data.oldFilename !== filename) {

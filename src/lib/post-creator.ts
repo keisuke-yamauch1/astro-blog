@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { generateDiaryFrontmatter, sanitizeDiaryFilename, generateDiaryFilename } from './diary-utils';
 
 // ==================== 型定義 ====================
 
@@ -115,15 +116,14 @@ export async function createDiaryPost(data: {
   }
 
   const date = data.date || new Date().toISOString().split('T')[0];
-  const sanitizedTitle = sanitizeFilename(data.title);
-  const filename = `${date}_${sanitizedTitle}${extension}`;
+  const filename = generateDiaryFilename(date, data.title, extension);
 
-  // フロントマター生成
-  const frontmatter = `---
-title: ${data.title}
-date: ${date}
-draft: ${data.draft ?? false}
----`;
+  // フロントマター生成（共通ユーティリティを使用）
+  const frontmatter = generateDiaryFrontmatter({
+    title: data.title,
+    date,
+    draft: data.draft,
+  });
 
   // import文を追加
   const importsSection = imports.length > 0 ? `\n\n${imports.join('\n')}` : '';
