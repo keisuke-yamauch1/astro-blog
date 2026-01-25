@@ -97,7 +97,6 @@ draft: ${data.draft ?? false}
 export async function createDiaryPost(data: {
   title: string;
   date?: string;
-  condition?: string;
   content: string;
   draft?: boolean;
   enableConversion?: boolean;      // デフォルト: true
@@ -123,7 +122,6 @@ export async function createDiaryPost(data: {
   const frontmatter = `---
 title: ${data.title}
 date: ${date}
-${data.condition ? `condition: ${data.condition}` : ''}
 draft: ${data.draft ?? false}
 ---`;
 

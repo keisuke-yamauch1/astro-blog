@@ -12,7 +12,6 @@ function generateDiaryContent(data: any, date: string, sanitizedTitle: string) {
   return `---
 title: ${data.title}
 date: ${date}
-${data.condition ? `condition: ${data.condition}` : ''}
 draft: ${data.draft ?? false}
 ---
 
