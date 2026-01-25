@@ -9,6 +9,7 @@ import sitemap from '@astrojs/sitemap';
 
 import {
   remarkBreaksForDiary,
+  remarkSpotifyEmbed,
   rehypeTargetBlank,
   rehypeCodeTitle,
   rehypeImageNotProse,
@@ -30,7 +31,7 @@ export default defineConfig({
     }
   }), sitemap(), mdx()],
   markdown: {
-    remarkPlugins: [remarkBreaksForDiary],
+    remarkPlugins: [remarkSpotifyEmbed, remarkBreaksForDiary],
     rehypePlugins: [
       [rehypePrettyCode, {
         theme: {
