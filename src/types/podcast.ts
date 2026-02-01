@@ -19,3 +19,9 @@ export interface PodcastFeed {
   channel: PodcastChannel;
   episodes: PodcastEpisode[];
 }
+
+export interface PodcastConfig {
+  label: string;
+  rssUrl: string;
+  linkText: string;
+}
