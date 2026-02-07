@@ -1,0 +1,566 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import BlogPreview from '../components/BlogPreview.astro'
+import DiaryPreview from '../components/DiaryPreview.astro'
+import SocialLinks from '../components/SocialLinks.astro'
+import { getCollection } from 'astro:content'
+import { filterPosts, filterDiaries } from '../utils/posts'
+import { siteConfig } from '../config'
+import { getDiaryPath } from '../utils/date'
+
+const [posts, diaryEntries] = await Promise.all([
+  getCollection('blog'),
+  getCollection('diary')
+]);
+
+// Configure homepage post filtering
+const homePagePosts = filterPosts(posts, {
+  ...siteConfig.homepage,
+})
+
+// Get latest diary entries
+const latestDiaryEntries = filterDiaries(diaryEntries, {
+  maxEntries: 5
+})
+---
+
+<BaseLayout title={siteConfig.title}>
+  <!-- ☆ﾟ.*･｡ﾟ 平成のホームページ風 歓迎エリア ﾟ｡･*.ﾟ☆ -->
+  <div class="heisei-welcome text-center mb-8 py-6 border-b-2 border-dashed border-yellow-400 dark:border-yellow-600">
+    <p class="welcome-text text-2xl md:text-3xl font-bold mb-4">
+      ☆ﾟ.*･｡ﾟ ようこそ！けちーんのホームページへ！ ﾟ｡･*.ﾟ☆
+    </p>
+
+    <marquee behavior="scroll" direction="left" scrollamount="3" class="marquee-text text-sm my-4 py-1">
+      ★お知らせ★ このサイトはリンクフリーです！ ★ 日記とブログを更新中！ ★ ご自由にお楽しみください ★ 相互リンク募集中 ★
+    </marquee>
+
+    <div class="counter-area my-4 flex items-center justify-center gap-2 flex-wrap">
+      <span class="text-sm text-gray-700 dark:text-gray-300">あなたは</span>
+      <span id="visitor-counter" class="counter-display">000000</span>
+      <span class="text-sm text-gray-700 dark:text-gray-300">人目のお客様です</span>
+    </div>
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      ※キリ番踏んだ方はご連絡ください！
+    </p>
+  </div>
+
+  <!-- ☆管理人のごあいさつコーナー☆ -->
+  <div class="about-box mb-8 p-4 text-left">
+    <h1 class="about-heading text-2xl font-bold mb-3 text-center">
+      ♪ﾟ+.☆ 管理人のごあいさつ ☆.+ﾟ♪
+    </h1>
+    <div class="about-separator text-center text-xs mb-3">─━─━─━─━─━─━─━─━─━─</div>
+    <p class="text-base mb-3 text-gray-800 dark:text-gray-200">
+      けちーんです（＾▽＾）ノ<br/>
+      日記書いたり、ブログ書いたり、自由に書いていきます！<br/>
+      気軽に見ていってくださいね♪
+    </p>
+    <div class="about-separator text-center text-xs mb-3">─━─━─━─━─━─━─━─━─━─</div>
+    <p class="text-sm mb-2 text-gray-600 dark:text-gray-400">▼ 管理人のリンク集 ▼</p>
+    <SocialLinks />
+  </div>
+
+  <div class="space-y-16">
+    <!-- ★ 日記コーナー ★ -->
+    <section class="diary-box p-4">
+      <h2 class="diary-heading text-xl font-bold mb-2 text-center">
+        ★☆ にっき ☆★
+      </h2>
+      <div class="diary-separator text-center text-xs mb-3">━━━━━━━━━━━━━━━━━━━</div>
+      <ul class="diary-list">
+        {latestDiaryEntries.map((entry, i) => (
+          <li class="diary-item">
+            <span class="diary-date">{entry.data.date.toLocaleDateString('ja-JP')}</span>
+            <a href={getDiaryPath(entry.data.date)} class="diary-link">
+              {entry.data.title}
+            </a>
+            {entry.data.weather && <span class="diary-weather">{entry.data.weather}</span>}
+            {i === 0 && <span class="blink-new">NEW!</span>}
+          </li>
+        ))}
+      </ul>
+      <div class="diary-separator text-center text-xs mt-3 mb-2">━━━━━━━━━━━━━━━━━━━</div>
+      <div class="text-center">
+        <a href="/diary/" class="diary-more">&gt;&gt; 過去の日記はこちら &lt;&lt;</a>
+      </div>
+    </section>
+
+    <!-- ♪ ブログコーナー ♪ -->
+    <section class="blog-box p-4">
+      <h2 class="blog-heading text-xl font-bold mb-2 text-center">
+        ♪☆ ブログ ☆♪
+      </h2>
+      <div class="blog-separator text-center text-xs mb-3">━━━━━━━━━━━━━━━━━━━</div>
+      <ul class="blog-list">
+        {homePagePosts.map((post, i) => (
+          <li class="blog-item">
+            <div class="blog-item-header">
+              <span class="blog-date">{post.data.date.toLocaleDateString('ja-JP')}</span>
+              <a href={`/blog/${post.data.id}`} class="blog-link">
+                {post.data.title}
+              </a>
+              {i === 0 && <span class="blink-new">NEW!</span>}
+            </div>
+            {post.data.description && (
+              <p class="blog-desc">{post.data.description.length > 60 ? post.data.description.slice(0, 60) + '...' : post.data.description}</p>
+            )}
+            {post.data.tags && post.data.tags.length > 0 && (
+              <div class="blog-tags">
+                {post.data.tags.map((tag: string) => (
+                  <a href={`/tags/${tag}`} class="blog-tag">#{tag}</a>
+                ))}
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div class="blog-separator text-center text-xs mt-3 mb-2">━━━━━━━━━━━━━━━━━━━</div>
+      <div class="text-center">
+        <a href="/blog/" class="blog-more">&gt;&gt; 過去のブログはこちら &lt;&lt;</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- 平成風フッター装飾 -->
+  <div class="text-center mt-12 pt-6 border-t-2 border-dashed border-yellow-400 dark:border-yellow-600">
+    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+      🚧 このサイトは永遠に工事中です 🚧
+    </p>
+    <p class="text-xs text-gray-400 dark:text-gray-500">
+      since 2024 | Best viewed with ❤️
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  /* 虹色テキスト */
+  .welcome-text {
+    background: linear-gradient(
+      to right,
+      #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff, #ff0000
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: rainbow-shift 3s linear infinite;
+  }
+
+  @keyframes rainbow-shift {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* アクセスカウンター */
+  .counter-display {
+    font-family: 'Courier New', monospace;
+    background: #000;
+    color: #00ff00;
+    padding: 4px 12px;
+    border: 2px inset #888;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    display: inline-block;
+  }
+
+  /* マーキーテキスト */
+  .marquee-text {
+    color: #ff6600;
+    font-weight: bold;
+  }
+
+  :global(.dark) .marquee-text {
+    color: #ffaa44;
+  }
+
+  /* 管理人のごあいさつボックス */
+  .about-box {
+    border: 3px double #cc8800;
+    background: linear-gradient(135deg, #fffff0 0%, #fffacd 100%);
+    border-radius: 0;
+  }
+
+  :global(.dark) .about-box {
+    background: linear-gradient(135deg, #2d2a1a 0%, #33301a 100%);
+    border-color: #aa7700;
+  }
+
+  .about-heading {
+    color: #cc4400;
+    text-shadow: 1px 1px 0 #ffcc88;
+  }
+
+  :global(.dark) .about-heading {
+    color: #ffaa44;
+    text-shadow: 1px 1px 0 #553300;
+  }
+
+  .about-separator {
+    color: #cc8800;
+    letter-spacing: 2px;
+  }
+
+  :global(.dark) .about-separator {
+    color: #aa7700;
+  }
+
+  /* 日記コーナー */
+  .diary-box {
+    border: 3px double #6688cc;
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+  }
+
+  :global(.dark) .diary-box {
+    background: linear-gradient(135deg, #1a1e2d 0%, #1a2033 100%);
+    border-color: #4466aa;
+  }
+
+  .diary-heading {
+    color: #3355aa;
+    text-shadow: 1px 1px 0 #aaccff;
+  }
+
+  :global(.dark) .diary-heading {
+    color: #6699ee;
+    text-shadow: 1px 1px 0 #223355;
+  }
+
+  .diary-separator {
+    color: #6688cc;
+    letter-spacing: 1px;
+  }
+
+  :global(.dark) .diary-separator {
+    color: #4466aa;
+  }
+
+  .diary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .diary-item {
+    padding: 6px 8px;
+    border-bottom: 1px dotted #aabbdd;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  :global(.dark) .diary-item {
+    border-bottom-color: #334466;
+  }
+
+  .diary-item:last-child {
+    border-bottom: none;
+  }
+
+  .diary-item:hover {
+    background: rgba(100, 140, 220, 0.1);
+  }
+
+  .diary-date {
+    font-family: 'Courier New', monospace;
+    color: #666;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  :global(.dark) .diary-date {
+    color: #889;
+  }
+
+  .diary-link {
+    color: #2244aa;
+    text-decoration: none;
+  }
+
+  .diary-link:hover {
+    color: #0022cc;
+    text-decoration: underline;
+  }
+
+  :global(.dark) .diary-link {
+    color: #77aaff;
+  }
+
+  :global(.dark) .diary-link:hover {
+    color: #99ccff;
+  }
+
+  .diary-weather {
+    font-size: 0.75rem;
+    color: #888;
+    background: #e8e8e8;
+    padding: 1px 6px;
+    border-radius: 2px;
+  }
+
+  :global(.dark) .diary-weather {
+    background: #333;
+    color: #aaa;
+  }
+
+  .diary-more {
+    color: #3355aa;
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  .diary-more:hover {
+    text-decoration: underline;
+  }
+
+  :global(.dark) .diary-more {
+    color: #6699ee;
+  }
+
+  /* ブログコーナー */
+  .blog-box {
+    border: 3px double #cc6688;
+    background: linear-gradient(135deg, #fff0f4 0%, #ffecf0 100%);
+  }
+
+  :global(.dark) .blog-box {
+    background: linear-gradient(135deg, #2d1a22 0%, #331a25 100%);
+    border-color: #aa4466;
+  }
+
+  .blog-heading {
+    color: #cc3366;
+    text-shadow: 1px 1px 0 #ffaacc;
+  }
+
+  :global(.dark) .blog-heading {
+    color: #ee6699;
+    text-shadow: 1px 1px 0 #552233;
+  }
+
+  .blog-separator {
+    color: #cc6688;
+    letter-spacing: 1px;
+  }
+
+  :global(.dark) .blog-separator {
+    color: #aa4466;
+  }
+
+  .blog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .blog-item {
+    padding: 8px;
+    border-bottom: 1px dotted #ddaabb;
+  }
+
+  :global(.dark) .blog-item {
+    border-bottom-color: #443344;
+  }
+
+  .blog-item:last-child {
+    border-bottom: none;
+  }
+
+  .blog-item:hover {
+    background: rgba(220, 100, 140, 0.08);
+  }
+
+  .blog-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .blog-date {
+    font-family: 'Courier New', monospace;
+    color: #666;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  :global(.dark) .blog-date {
+    color: #889;
+  }
+
+  .blog-link {
+    color: #aa2255;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95rem;
+  }
+
+  .blog-link:hover {
+    color: #cc0044;
+    text-decoration: underline;
+  }
+
+  :global(.dark) .blog-link {
+    color: #ff77aa;
+  }
+
+  :global(.dark) .blog-link:hover {
+    color: #ff99cc;
+  }
+
+  .blog-desc {
+    margin: 2px 0 0 0;
+    font-size: 0.8rem;
+    color: #777;
+    padding-left: 1px;
+  }
+
+  :global(.dark) .blog-desc {
+    color: #999;
+  }
+
+  .blog-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+  }
+
+  .blog-tag {
+    font-size: 0.7rem;
+    color: #cc6688;
+    background: #ffeef4;
+    padding: 0 5px;
+    border: 1px solid #eeccdd;
+    text-decoration: none;
+  }
+
+  .blog-tag:hover {
+    background: #ffddee;
+  }
+
+  :global(.dark) .blog-tag {
+    color: #ee88aa;
+    background: #332233;
+    border-color: #553344;
+  }
+
+  :global(.dark) .blog-tag:hover {
+    background: #443344;
+  }
+
+  .blog-more {
+    color: #cc3366;
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  .blog-more:hover {
+    text-decoration: underline;
+  }
+
+  :global(.dark) .blog-more {
+    color: #ee6699;
+  }
+
+  /* NEW! 点滅 */
+  .blink-new {
+    color: #ff0000;
+    font-size: 0.75rem;
+    font-weight: bold;
+    animation: blink-anim 1s step-end infinite;
+  }
+
+  @keyframes blink-anim {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+</style>
+
+<style is:global>
+  /* キラキラカーソル */
+  .sparkle-star {
+    position: absolute;
+    pointer-events: none;
+    width: 10px;
+    height: 10px;
+    animation: sparkle-fade 800ms ease-out forwards;
+    z-index: 9999;
+  }
+
+  .sparkle-star::before {
+    content: '✦';
+    position: absolute;
+    font-size: 12px;
+    color: gold;
+    text-shadow: 0 0 4px gold;
+  }
+
+  .sparkle-star:nth-child(odd)::before {
+    content: '✧';
+    color: #ff69b4;
+    text-shadow: 0 0 4px #ff69b4;
+  }
+
+  @keyframes sparkle-fade {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0) rotate(0deg);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.3) translateY(-20px) rotate(180deg);
+    }
+  }
+</style>
+
+<script>
+  // アクセスカウンター
+  (function() {
+    const storageKey = 'heisei-visitor-count';
+    const lastVisitKey = 'heisei-last-visit';
+    const now = Date.now();
+    const lastVisit = parseInt(localStorage.getItem(lastVisitKey) || '0');
+    let count = parseInt(localStorage.getItem(storageKey) || '0');
+
+    // 初回訪問時は適当な数字からスタート（見栄え重視）
+    if (count === 0) {
+      count = 10000 + Math.floor(Math.random() * 5000);
+    }
+
+    // 前回訪問から30秒以上経っていたらカウントアップ
+    if (now - lastVisit > 30000) {
+      count += Math.floor(Math.random() * 3) + 1;
+      localStorage.setItem(lastVisitKey, now.toString());
+    }
+
+    localStorage.setItem(storageKey, count.toString());
+
+    const counterEl = document.getElementById('visitor-counter');
+    if (counterEl) {
+      counterEl.textContent = count.toString().padStart(6, '0');
+    }
+  })();
+
+  // キラキラカーソル
+  (function() {
+    let lastSparkle = 0;
+    const throttleMs = 80;
+
+    document.addEventListener('mousemove', function(e) {
+      const now = Date.now();
+      if (now - lastSparkle < throttleMs) return;
+      lastSparkle = now;
+
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle-star';
+      sparkle.style.left = (e.pageX - 5 + (Math.random() * 10 - 5)) + 'px';
+      sparkle.style.top = (e.pageY - 5 + (Math.random() * 10 - 5)) + 'px';
+      document.body.appendChild(sparkle);
+
+      setTimeout(function() { sparkle.remove(); }, 800);
+    });
+  })();
+</script>
