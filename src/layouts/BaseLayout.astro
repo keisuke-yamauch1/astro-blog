@@ -7,9 +7,17 @@ import { siteConfig } from '../config'
 interface Props {
   title: string
   description?: string
+  maxWidth?: 'md' | 'lg' | 'xl' | '2xl'
 }
 
-const { title, description = 'A minimal blog focused on excellent reading experience' } = Astro.props
+const { title, description = 'A minimal blog focused on excellent reading experience', maxWidth = 'md' } = Astro.props
+
+const maxWidthClass = {
+  md: 'max-w-3xl',
+  lg: 'max-w-4xl',
+  xl: 'max-w-5xl',
+  '2xl': 'max-w-6xl',
+}[maxWidth]
 ---
 
 <!doctype html>
@@ -62,9 +70,13 @@ const { title, description = 'A minimal blog focused on excellent reading experi
   <body class="min-h-screen bg-white dark:bg-gray-900">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <Header />
+    </div>
+    <div class={`${maxWidthClass} mx-auto px-4 sm:px-6 lg:px-8`}>
       <main class="py-12">
         <slot />
       </main>
+    </div>
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
       <Footer />
     </div>
   </body>
