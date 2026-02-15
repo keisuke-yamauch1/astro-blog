@@ -3,14 +3,17 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogPreview from '../components/BlogPreview.astro'
 import DiaryPreview from '../components/DiaryPreview.astro'
 import SocialLinks from '../components/SocialLinks.astro'
-import { getCollection } from 'astro:content'
+import { getCollection, getEntry } from 'astro:content'
 import { filterPosts, filterDiaries } from '../utils/posts'
 import { siteConfig } from '../config'
 
-const [posts, diaryEntries] = await Promise.all([
+const [posts, diaryEntries, homeContent] = await Promise.all([
   getCollection('blog'),
-  getCollection('diary')
+  getCollection('diary'),
+  getEntry('home', 'index'),
 ]);
+
+const { Content: HomeContent } = homeContent ? await homeContent.render() : { Content: null };
 
 // Configure homepage post filtering
 const homePagePosts = filterPosts(posts, {
@@ -25,12 +28,18 @@ const latestDiaryEntries = filterDiaries(diaryEntries, {
 
 <BaseLayout title={siteConfig.title}>
   <div class="text-left mb-8">
-    <h1 class="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{siteConfig.slogan}</h1>
-    <p class="text-xl mb-8 text-gray-600 dark:text-gray-300">{siteConfig.description}</p>
+    <h1 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{siteConfig.slogan}</h1>
     <SocialLinks />
+    <!-- <p class="text-xl mb-8 text-gray-600 dark:text-gray-300">{siteConfig.description}</p> -->
   </div>
 
-  <div class="space-y-16">
+  {HomeContent && (
+    <div class="prose dark:prose-invert max-w-none mb-12">
+      <HomeContent />
+    </div>
+  )}
+
+  <!-- <div class="space-y-16">
     <section>
       <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">最新の日記</h2>
       <div class="space-y-8">
@@ -50,5 +59,5 @@ const latestDiaryEntries = filterDiaries(diaryEntries, {
         <a href="/blog/" class="text-primary-500 hover:text-primary-600 text-sm">もっとみる →</a>
       </div>
     </section>
-  </div>
+  </div> -->
 </BaseLayout>

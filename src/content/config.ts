@@ -46,4 +46,10 @@ const profile = defineCollection({
   }),
 });
 
-export const collections = { blog, diary, emonicle, profile };
+const home = defineCollection({
+  type: 'content',
+  schema: z.object({
+  }),
+});
+
+export const collections = { blog, diary, emonicle, profile, home };
