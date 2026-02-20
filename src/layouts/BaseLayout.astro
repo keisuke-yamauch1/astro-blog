@@ -10,7 +10,8 @@ interface Props {
   maxWidth?: 'md' | 'lg' | 'xl' | '2xl'
 }
 
-const { title, description = 'A minimal blog focused on excellent reading experience', maxWidth = 'md' } = Astro.props
+const { title, description = siteConfig.description, maxWidth = 'md' } = Astro.props
+const currentUrl = Astro.url.href
 
 const maxWidthClass = {
   md: 'max-w-3xl',
@@ -50,14 +51,14 @@ const maxWidthClass = {
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={siteConfig.site} />
+    <meta property="og:url" content={currentUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={`${siteConfig.site}icon.png`} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={siteConfig.site} />
+    <meta property="twitter:url" content={currentUrl} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={`${siteConfig.site}icon.png`} />
