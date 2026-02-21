@@ -45,6 +45,7 @@ async function handleGitHubSaveDraft(data: any) {
     const githubPath = `src/content/diary/${filename}`;
     const content = generateDiaryContent({
       title: data.title,
+      description: data.description,
       date,
       content: data.content,
       draft: true,

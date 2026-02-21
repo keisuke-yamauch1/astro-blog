@@ -6,6 +6,7 @@
 // 型定義
 export interface DiaryFrontmatterOptions {
   title: string;
+  description?: string;
   date: string;
   draft?: boolean;
 }
@@ -20,7 +21,7 @@ export interface DiaryContentOptions extends DiaryFrontmatterOptions {
 export function generateDiaryFrontmatter(options: DiaryFrontmatterOptions): string {
   return `---
 title: ${options.title}
-date: ${options.date}
+${options.description ? `description: ${options.description}\n` : ''}date: ${options.date}
 draft: ${options.draft ?? false}
 ---`;
 }
@@ -31,6 +32,7 @@ draft: ${options.draft ?? false}
 export function generateDiaryContent(options: DiaryContentOptions): string {
   const frontmatter = generateDiaryFrontmatter({
     title: options.title,
+    description: options.description,
     date: options.date,
     draft: options.draft,
   });

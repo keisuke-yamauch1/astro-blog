@@ -97,6 +97,7 @@ draft: ${data.draft ?? false}
 // 日記作成
 export async function createDiaryPost(data: {
   title: string;
+  description?: string;
   date?: string;
   content: string;
   draft?: boolean;
@@ -121,6 +122,7 @@ export async function createDiaryPost(data: {
   // フロントマター生成（共通ユーティリティを使用）
   const frontmatter = generateDiaryFrontmatter({
     title: data.title,
+    description: data.description,
     date,
     draft: data.draft,
   });
