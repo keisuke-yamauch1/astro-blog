@@ -13,7 +13,7 @@ const { title, date, weather, condition, image, draft } = entry.data
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} image={image} ogType="article">
   <article class="max-w-3xl mx-auto px-4">
     {draft && !isPreview && (
       <div class="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 mb-8 rounded">

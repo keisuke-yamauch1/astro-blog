@@ -14,7 +14,7 @@ const { title, date, tags, image } = post.data
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<BaseLayout title={title}>
+<BaseLayout title={title} description={post.data.description} image={image} ogType="article">
   <article class="max-w-3xl mx-auto px-4">
     {image && <img src={image} alt={title} class="w-full h-[400px] object-cover rounded-xl shadow-lg mb-8" loading="eager" />}
     <header class="mb-12">

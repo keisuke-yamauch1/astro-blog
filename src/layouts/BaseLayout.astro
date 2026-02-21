@@ -7,10 +7,13 @@ import { siteConfig } from '../config'
 interface Props {
   title: string
   description?: string
+  image?: string
+  ogType?: string
   maxWidth?: 'md' | 'lg' | 'xl' | '2xl'
 }
 
-const { title, description = siteConfig.description, maxWidth = 'md' } = Astro.props
+const { title, description = siteConfig.description, image, ogType = 'website', maxWidth = 'md' } = Astro.props
+const ogImage = image ?? `${siteConfig.site}icon.png`
 const currentUrl = Astro.url.href
 
 const maxWidthClass = {
@@ -50,18 +53,18 @@ const maxWidthClass = {
     </script>
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:url" content={currentUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${siteConfig.site}icon.png`} />
+    <meta property="og:image" content={ogImage} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={currentUrl} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={`${siteConfig.site}icon.png`} />
+    <meta property="twitter:image" content={ogImage} />
 
     <!-- Twitter Widget JavaScript -->
     <script async src="https://platform.twitter.com/widgets.js"></script>
