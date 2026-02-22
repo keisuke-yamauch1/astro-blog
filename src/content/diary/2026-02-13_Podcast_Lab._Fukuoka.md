@@ -2,6 +2,7 @@
 title: Podcast Lab. Fukuoka
 date: 2026-02-13
 draft: false
+description: "ポッドキャストがPodcast Lab. Fukuokaの審査通過"
 ---
 
 先月に同僚と始めたポッドキャスト

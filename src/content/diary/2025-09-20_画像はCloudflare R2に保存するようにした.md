@@ -1,5 +1,6 @@
 ---
 title: 画像はCloudflare R2に保存するようにした
+description: "ブログ画像をCloudflare R2に保存する仕組みを構築"
 date: 2025-09-20
 weather: そこそこ雨
 ---

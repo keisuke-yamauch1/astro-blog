@@ -2,6 +2,7 @@
 title: 8番出口／Slay the Spire
 date: 2025-09-06
 weather: 肌がジリジリ焼けるような日差しだった
+description: "映画「8番出口」を鑑賞し、Slay the Spireにハマる"
 ---
 [8番出口](https://exit8-movie.toho.co.jp/)を見に行った  
 
