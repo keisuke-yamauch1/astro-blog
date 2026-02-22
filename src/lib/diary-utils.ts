@@ -16,12 +16,23 @@ export interface DiaryContentOptions extends DiaryFrontmatterOptions {
 }
 
 /**
+ * YAML値をエスケープ（YAMLインジェクション対策）
+ */
+function escapeYamlValue(value: string): string {
+  // YAML特殊文字やコロン、改行を含む場合はダブルクォートでエスケープ
+  if (/[:\n\r"'#{}\[\],&*?|>!%@`]/.test(value) || value.trim() !== value) {
+    return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`;
+  }
+  return value;
+}
+
+/**
  * 日記用フロントマターを生成
  */
 export function generateDiaryFrontmatter(options: DiaryFrontmatterOptions): string {
   return `---
-title: ${options.title}
-${options.description ? `description: ${options.description}\n` : ''}date: ${options.date}
+title: ${escapeYamlValue(options.title)}
+${options.description ? `description: ${escapeYamlValue(options.description)}\n` : ''}date: ${options.date}
 draft: ${options.draft ?? false}
 ---`;
 }
