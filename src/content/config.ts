@@ -19,7 +19,7 @@ const diary = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    description: z.string().optional(),
+    description: z.string(),
     date: z.date(),
     weather: z.string().optional(),
     condition: z.string().optional(),
