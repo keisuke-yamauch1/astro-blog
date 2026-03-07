@@ -172,8 +172,12 @@ export async function fetchAllBlogs(): Promise<UnifiedBlogEntry[]> {
 
     const cmsEntries = allCmsEntries.map(convertMicroCMSBlogToEntry);
 
-    // 統合して返す
-    return [...mdEntries, ...cmsEntries];
+    // 重複排除: microCMSを優先（idで比較）
+    const cmsIdSet = new Set(cmsEntries.map(e => e.data.id));
+    const uniqueMdEntries = mdEntries.filter(e => !cmsIdSet.has(e.data.id));
+
+    // microCMS + ユニークなMarkdownを統合して返す
+    return [...cmsEntries, ...uniqueMdEntries];
   } catch (error) {
     console.error('Error fetching blogs:', error);
     // microCMSでエラーが発生してもMarkdownエントリーは返す
@@ -216,7 +220,12 @@ export async function fetchAllDiaries(): Promise<UnifiedDiaryEntry[]> {
 
     const cmsEntries = allCmsEntries.map(convertMicroCMSDiaryToEntry);
 
-    return [...mdEntries, ...cmsEntries];
+    // 重複排除: microCMSを優先
+    const cmsSlugSet = new Set(cmsEntries.map(e => e.slug));
+    const uniqueMdEntries = mdEntries.filter(e => !cmsSlugSet.has(e.slug));
+
+    // microCMS + ユニークなMarkdownを統合して返す
+    return [...cmsEntries, ...uniqueMdEntries];
   } catch (error) {
     console.error('Error fetching diaries:', error);
     const markdownEntries = await getCollection('diary');
@@ -258,7 +267,12 @@ export async function fetchAllEmonicles(): Promise<UnifiedEmonicleEntry[]> {
 
     const cmsEntries = allCmsEntries.map(convertMicroCMSEmonicleToEntry);
 
-    return [...mdEntries, ...cmsEntries];
+    // 重複排除: microCMSを優先（idで比較）
+    const cmsIdSet = new Set(cmsEntries.map(e => e.data.id));
+    const uniqueMdEntries = mdEntries.filter(e => !cmsIdSet.has(e.data.id));
+
+    // microCMS + ユニークなMarkdownを統合して返す
+    return [...cmsEntries, ...uniqueMdEntries];
   } catch (error) {
     console.error('Error fetching emonicles:', error);
     const markdownEntries = await getCollection('emonicle');
