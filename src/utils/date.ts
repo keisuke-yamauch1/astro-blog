@@ -5,10 +5,12 @@ export interface DateParts {
 }
 
 export function getDateParts(date: Date): DateParts {
+  // JSTで日付を取得（ビルド環境のタイムゾーンに依存しないようにする）
+  const jstDate = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
   return {
-    year: date.getFullYear().toString(),
-    month: (date.getMonth() + 1).toString().padStart(2, '0'),
-    day: date.getDate().toString().padStart(2, '0'),
+    year: jstDate.getFullYear().toString(),
+    month: (jstDate.getMonth() + 1).toString().padStart(2, '0'),
+    day: jstDate.getDate().toString().padStart(2, '0'),
   };
 }
 
