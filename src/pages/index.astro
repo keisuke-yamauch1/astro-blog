@@ -3,13 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogPreview from '../components/BlogPreview.astro'
 import DiaryPreview from '../components/DiaryPreview.astro'
 import SocialLinks from '../components/SocialLinks.astro'
-import { getCollection, getEntry } from 'astro:content'
+import { getEntry } from 'astro:content'
+import { fetchAllBlogs, fetchAllDiaries } from '../utils/content-fetcher'
 import { filterPosts, filterDiaries } from '../utils/posts'
 import { siteConfig } from '../config'
 
 const [posts, diaryEntries, homeContent] = await Promise.all([
-  getCollection('blog'),
-  getCollection('diary'),
+  fetchAllBlogs(),
+  fetchAllDiaries(),
   getEntry('home', 'index'),
 ]);
 

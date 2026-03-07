@@ -2,11 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogPreview from '../../components/BlogPreview.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getCollection } from 'astro:content';
+import { fetchAllBlogs } from '../../utils/content-fetcher';
 import { filterPublishedPosts, sortPostsByDate } from '../../utils/posts';
 
 export async function getStaticPaths({ paginate }) {
-  const posts = await getCollection('blog');
+  const posts = await fetchAllBlogs();
   const publishedPosts = filterPublishedPosts(posts);
   const sortedPosts = sortPostsByDate(publishedPosts);
 

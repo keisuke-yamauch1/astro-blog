@@ -1,9 +1,9 @@
-import { getCollection } from 'astro:content';
+import { fetchAllBlogs, fetchAllDiaries, fetchAllEmonicles } from '../../utils/content-fetcher';
 
 export async function GET() {
-  const blogPosts = await getCollection('blog');
-  const diaryPosts = await getCollection('diary');
-  const emoniclePosts = await getCollection('emonicle');
+  const blogPosts = await fetchAllBlogs();
+  const diaryPosts = await fetchAllDiaries();
+  const emoniclePosts = await fetchAllEmonicles();
 
   const searchData = await Promise.all([
     // Blog posts
@@ -12,10 +12,16 @@ export async function GET() {
         return null;
       }
 
-      const cleanContent = post.body.replace(/!\[.*?\]\(.*?\)/g, '')
-        .replace(/<img[^>]*>/g, '')
-        .replace(/<(video|audio)[^>]*>.*?<\/(video|audio)>/gs, '')
-        .replace(/\.(png|jpg|jpeg|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg)/gi, '');
+      // microCMSのコンテンツはHTMLなので、HTMLタグを除去
+      let cleanContent = post.body;
+      if (post.source === 'microcms') {
+        cleanContent = post.body.replace(/<[^>]*>/g, ' '); // HTMLタグを除去
+      } else {
+        cleanContent = post.body.replace(/!\[.*?\]\(.*?\)/g, '')
+          .replace(/<img[^>]*>/g, '')
+          .replace(/<(video|audio)[^>]*>.*?<\/(video|audio)>/gs, '')
+          .replace(/\.(png|jpg|jpeg|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg)/gi, '');
+      }
 
       return {
         title: post.data.title,
@@ -31,10 +37,15 @@ export async function GET() {
 
     // Diary posts
     ...diaryPosts.map(async (post) => {
-      const cleanContent = post.body.replace(/!\[.*?\]\(.*?\)/g, '')
-        .replace(/<img[^>]*>/g, '')
-        .replace(/<(video|audio)[^>]*>.*?<\/(video|audio)>/gs, '')
-        .replace(/\.(png|jpg|jpeg|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg)/gi, '');
+      let cleanContent = post.body;
+      if (post.source === 'microcms') {
+        cleanContent = post.body.replace(/<[^>]*>/g, ' ');
+      } else {
+        cleanContent = post.body.replace(/!\[.*?\]\(.*?\)/g, '')
+          .replace(/<img[^>]*>/g, '')
+          .replace(/<(video|audio)[^>]*>.*?<\/(video|audio)>/gs, '')
+          .replace(/\.(png|jpg|jpeg|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg)/gi, '');
+      }
 
       return {
         title: post.data.title,
@@ -53,10 +64,15 @@ export async function GET() {
         return null;
       }
 
-      const cleanContent = post.body.replace(/!\[.*?\]\(.*?\)/g, '')
-        .replace(/<img[^>]*>/g, '')
-        .replace(/<(video|audio)[^>]*>.*?<\/(video|audio)>/gs, '')
-        .replace(/\.(png|jpg|jpeg|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg)/gi, '');
+      let cleanContent = post.body;
+      if (post.source === 'microcms') {
+        cleanContent = post.body.replace(/<[^>]*>/g, ' ');
+      } else {
+        cleanContent = post.body.replace(/!\[.*?\]\(.*?\)/g, '')
+          .replace(/<img[^>]*>/g, '')
+          .replace(/<(video|audio)[^>]*>.*?<\/(video|audio)>/gs, '')
+          .replace(/\.(png|jpg|jpeg|gif|webp|svg|avif|mp4|webm|mp3|wav|ogg)/gi, '');
+      }
 
       return {
         title: post.data.title,

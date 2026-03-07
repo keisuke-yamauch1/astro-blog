@@ -2,11 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import DiaryPreview from '../../components/DiaryPreview.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getCollection } from 'astro:content';
+import { fetchAllDiaries } from '../../utils/content-fetcher';
 import { sortDiariesByDate, filterPublishedDiaries } from '../../utils/posts';
 
 export async function getStaticPaths({ paginate }) {
-  const entries = await getCollection('diary');
+  const entries = await fetchAllDiaries();
   const publishedEntries = filterPublishedDiaries(entries);
   const sortedEntries = sortDiariesByDate(publishedEntries);
 

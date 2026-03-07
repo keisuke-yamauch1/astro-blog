@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { fetchAllBlogs } from '../utils/content-fetcher';
 import { filterPublishedPosts, sortPostsByDate } from '../utils/posts';
 import PostDate from '../components/PostDate.astro';
 
-const posts = await getCollection('blog');
+const posts = await fetchAllBlogs();
 const publishedPosts = filterPublishedPosts(posts);
 const sortedPosts = sortPostsByDate(publishedPosts);
 

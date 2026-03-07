@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
+import { fetchAllEmonicles } from '../../utils/content-fetcher';
 import EmoniclePost from '../../layouts/EmoniclePost.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('emonicle');
+  const posts = await fetchAllEmonicles();
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -12,8 +12,16 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+// microCMSのコンテンツはHTMLとして返される
+const isMicroCMS = post.source === 'microcms';
+const htmlContent = isMicroCMS ? Content() : null;
 ---
 
 <EmoniclePost post={post}>
-  <Content />
+  {isMicroCMS ? (
+    <div set:html={htmlContent} />
+  ) : (
+    <Content />
+  )}
 </EmoniclePost>

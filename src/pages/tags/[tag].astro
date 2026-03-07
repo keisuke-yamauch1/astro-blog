@@ -1,11 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BlogPreview from '../../components/BlogPreview.astro';
-import { getCollection } from 'astro:content';
+import { fetchAllBlogs } from '../../utils/content-fetcher';
 import { getAllTags, getPostsByTag, sortPostsByDate } from '../../utils/posts';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await fetchAllBlogs();
   const tags = getAllTags(posts);
 
   return tags.map((tag) => {

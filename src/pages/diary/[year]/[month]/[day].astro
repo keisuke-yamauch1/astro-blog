@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { fetchAllDiaries } from '../../../../utils/content-fetcher';
 import DiaryPost from '../../../../layouts/DiaryPost.astro';
 import { filterPublishedDiaries } from '../../../../utils/posts';
 import { getDateParts, matchesDateParts } from '../../../../utils/date';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('diary');
+  const entries = await fetchAllDiaries();
   const publishedEntries = filterPublishedDiaries(entries);
 
   return publishedEntries.map((entry) => {
@@ -27,8 +27,32 @@ if (!matchesDateParts(entry.data.date, { year, month, day })) {
 }
 
 const { Content } = await entry.render();
+
+// microCMSのコンテンツはHTMLとして返される
+const isMicroCMS = entry.source === 'microcms';
+const htmlContent = isMicroCMS ? Content() : null;
 ---
 
 <DiaryPost entry={entry}>
-  <Content />
+  {isMicroCMS ? (
+    <div set:html={htmlContent} class="microcms-content" />
+  ) : (
+    <Content />
+  )}
 </DiaryPost>
+
+<style>
+  /* microCMSのHTMLコンテンツのスタイリング */
+  :global(.microcms-content p) {
+    margin-bottom: 1em;
+  }
+
+  :global(.microcms-content p:last-child) {
+    margin-bottom: 0;
+  }
+
+  /* 空の段落も高さを持つようにする */
+  :global(.microcms-content p:empty) {
+    min-height: 1em;
+  }
+</style>

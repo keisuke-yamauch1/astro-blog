@@ -1,11 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { fetchAllEmonicles } from '../../utils/content-fetcher';
 import EmoniclePost from '../../layouts/EmoniclePost.astro';
 import { filterPublishedEmonicles } from '../../utils/posts';
 import { validateIdPost } from '../../utils/validation';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('emonicle');
+  const posts = await fetchAllEmonicles();
   const publishedPosts = filterPublishedEmonicles(posts);
 
   return publishedPosts.map((post) => ({
@@ -23,8 +23,32 @@ if (!validateIdPost(post, id)) {
 }
 
 const { Content } = await post.render();
+
+// microCMSのコンテンツはHTMLとして返される
+const isMicroCMS = post.source === 'microcms';
+const htmlContent = isMicroCMS ? Content() : null;
 ---
 
 <EmoniclePost post={post}>
-  <Content />
+  {isMicroCMS ? (
+    <div set:html={htmlContent} class="microcms-content" />
+  ) : (
+    <Content />
+  )}
 </EmoniclePost>
+
+<style>
+  /* microCMSのHTMLコンテンツのスタイリング */
+  :global(.microcms-content p) {
+    margin-bottom: 1em;
+  }
+
+  :global(.microcms-content p:last-child) {
+    margin-bottom: 0;
+  }
+
+  /* 空の段落も高さを持つようにする */
+  :global(.microcms-content p:empty) {
+    min-height: 1em;
+  }
+</style>

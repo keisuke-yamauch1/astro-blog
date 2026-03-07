@@ -2,11 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EmoniclePreview from '../../components/EmoniclePreview.astro';
 import Pagination from '../../components/Pagination.astro';
-import { getCollection } from 'astro:content';
+import { fetchAllEmonicles } from '../../utils/content-fetcher';
 import { filterPublishedEmonicles, sortEmoniclesByDate } from '../../utils/posts';
 
 export async function getStaticPaths({ paginate }) {
-  const posts = await getCollection('emonicle');
+  const posts = await fetchAllEmonicles();
   const publishedPosts = filterPublishedEmonicles(posts);
   const sortedPosts = sortEmoniclesByDate(publishedPosts);
 
