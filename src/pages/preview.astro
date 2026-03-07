@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PreviewContainer from '../components/PreviewContainer';
+
+// 動的ルーティングを有効化
+export const prerender = false;
+
+// クエリパラメータの取得
+const contentId = Astro.url.searchParams.get('contentId');
+const draftKey = Astro.url.searchParams.get('draftKey');
+const type = Astro.url.searchParams.get('type');
+
+// パラメータの基本的なバリデーション
+let validationError = null;
+if (!contentId || !draftKey || !type) {
+  validationError = '必須パラメータが不足しています: contentId, draftKey, type';
+} else if (!['blog', 'diary', 'emonicle'].includes(type)) {
+  validationError = `無効なコンテンツタイプ: ${type}`;
+}
+
+// 環境変数を取得（サーバー側で読み取り、Propsとして渡す）
+const serviceDomain = import.meta.env.PUBLIC_MICROCMS_SERVICE_DOMAIN;
+const apiKey = import.meta.env.PUBLIC_MICROCMS_API_KEY;
+
+// 環境変数チェック
+if (!serviceDomain || !apiKey) {
+  validationError = `環境変数が設定されていません。PUBLIC_MICROCMS_SERVICE_DOMAIN=${serviceDomain}, PUBLIC_MICROCMS_API_KEY=${apiKey ? '***' : 'undefined'}`;
+}
+---
+
+<BaseLayout title="プレビュー | microCMS" description="microCMSコンテンツのプレビュー">
+  <!-- バリデーションエラー表示 -->
+  {validationError && (
+    <div class="max-w-3xl mx-auto px-4 py-12">
+      <div class="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 p-4 rounded">
+        <p class="text-red-800 dark:text-red-200">
+          <strong>エラー:</strong> {validationError}
+        </p>
+      </div>
+    </div>
+  )}
+
+  <!-- プレビューコンテンツ -->
+  {!validationError && (
+    <PreviewContainer
+      client:only="preact"
+      serviceDomain={serviceDomain}
+      apiKey={apiKey}
+    />
+  )}
+</BaseLayout>

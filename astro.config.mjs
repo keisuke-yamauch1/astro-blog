@@ -6,6 +6,7 @@ import mdx from '@astrojs/mdx';
 import embeds from 'astro-embed/integration';
 import vercel from '@astrojs/vercel';
 import sitemap from '@astrojs/sitemap';
+import preact from '@astrojs/preact';
 
 import {
   remarkBreaksForDiary,
@@ -19,17 +20,23 @@ export default defineConfig({
   site: siteConfig.site,
   output: 'static',
   adapter: vercel(),
-  integrations: [tailwind(), embeds({
-    // Configure YouTube to use English UI
-    services: {
-      YouTube: {
-        params: 'hl=en&rel=0'
-      },
-      Tweet: true,
-      Vimeo: true,
-      LinkPreview: false
-    }
-  }), sitemap(), mdx()],
+  integrations: [
+    tailwind(),
+    preact({ compat: true }),
+    embeds({
+      // Configure YouTube to use English UI
+      services: {
+        YouTube: {
+          params: 'hl=en&rel=0'
+        },
+        Tweet: true,
+        Vimeo: true,
+        LinkPreview: false
+      }
+    }),
+    sitemap(),
+    mdx()
+  ],
   markdown: {
     remarkPlugins: [remarkSpotifyEmbed, remarkBreaksForDiary],
     rehypePlugins: [
