@@ -7,7 +7,7 @@ export interface UnifiedBlogEntry {
   id: string;
   slug: string;
   data: {
-    id: number;
+    id?: number; // Markdownエントリー用（optional）
     title: string;
     description?: string;
     date: Date;
@@ -43,7 +43,7 @@ export interface UnifiedEmonicleEntry {
   id: string;
   slug: string;
   data: {
-    id: number;
+    id?: number; // Markdownエントリー用（optional）
     title: string;
     description?: string;
     date: Date;
@@ -58,10 +58,10 @@ export interface UnifiedEmonicleEntry {
 // microCMS BlogエントリーをContent Collections互換形式に変換
 function convertMicroCMSBlogToEntry(cms: MicroCMSBlog): UnifiedBlogEntry {
   return {
-    id: cms.id,
-    slug: cms.customId.toString(),
+    id: cms.id, // microCMSのcontentID（URL用）
+    slug: cms.id, // microCMSのcontentID
     data: {
-      id: cms.customId,
+      // id フィールドは削除（microCMSエントリーには不要）
       title: cms.title,
       description: cms.description,
       date: new Date(cms.date),
@@ -117,10 +117,10 @@ function convertMicroCMSDiaryToEntry(cms: MicroCMSDiary): UnifiedDiaryEntry {
 // microCMS EmonicleエントリーをContent Collections互換形式に変換
 function convertMicroCMSEmonicleToEntry(cms: MicroCMSEmonicle): UnifiedEmonicleEntry {
   return {
-    id: cms.id,
-    slug: cms.customId.toString(),
+    id: cms.id, // microCMSのcontentID（URL用）
+    slug: cms.id, // microCMSのcontentID
     data: {
-      id: cms.customId,
+      // id フィールドは削除（microCMSエントリーには不要）
       title: cms.title,
       description: cms.description,
       date: new Date(cms.date),
@@ -172,9 +172,9 @@ export async function fetchAllBlogs(): Promise<UnifiedBlogEntry[]> {
 
     const cmsEntries = allCmsEntries.map(convertMicroCMSBlogToEntry);
 
-    // 重複排除: microCMSを優先（idで比較）
-    const cmsIdSet = new Set(cmsEntries.map(e => e.data.id));
-    const uniqueMdEntries = mdEntries.filter(e => !cmsIdSet.has(e.data.id));
+    // 重複排除: microCMSを優先（customIdで比較）
+    const cmsCustomIdSet = new Set(allCmsEntries.map(cms => cms.customId));
+    const uniqueMdEntries = mdEntries.filter(e => e.data.id !== undefined && !cmsCustomIdSet.has(e.data.id));
 
     // microCMS + ユニークなMarkdownを統合して返す
     return [...cmsEntries, ...uniqueMdEntries];
@@ -267,9 +267,9 @@ export async function fetchAllEmonicles(): Promise<UnifiedEmonicleEntry[]> {
 
     const cmsEntries = allCmsEntries.map(convertMicroCMSEmonicleToEntry);
 
-    // 重複排除: microCMSを優先（idで比較）
-    const cmsIdSet = new Set(cmsEntries.map(e => e.data.id));
-    const uniqueMdEntries = mdEntries.filter(e => !cmsIdSet.has(e.data.id));
+    // 重複排除: microCMSを優先（customIdで比較）
+    const cmsCustomIdSet = new Set(allCmsEntries.map(cms => cms.customId));
+    const uniqueMdEntries = mdEntries.filter(e => e.data.id !== undefined && !cmsCustomIdSet.has(e.data.id));
 
     // microCMS + ユニークなMarkdownを統合して返す
     return [...cmsEntries, ...uniqueMdEntries];

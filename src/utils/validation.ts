@@ -1,15 +1,15 @@
 import { matchesDateParts } from './date';
 
 /**
- * IDベースの記事検証
+ * IDベースの記事検証（microCMS contentIDを使用）
  */
-export function validateIdPost<T extends { data: { id: number } }>(
+export function validateIdPost<T extends { id: string }>(
   post: T | undefined,
   id: string | undefined
 ): post is T {
   return post !== undefined &&
-         post.data !== undefined &&
-         post.data.id.toString() === id;
+         id !== undefined &&
+         post.id === id;
 }
 
 /**
