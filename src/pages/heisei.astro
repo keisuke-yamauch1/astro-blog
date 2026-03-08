@@ -6,7 +6,7 @@ import SocialLinks from '../components/SocialLinks.astro'
 import { fetchAllBlogs, fetchAllDiaries } from '../utils/content-fetcher'
 import { filterPosts, filterDiaries } from '../utils/posts'
 import { siteConfig } from '../config'
-import { getDiaryPath } from '../utils/date'
+import { formatDate, getDiaryPath } from '../utils/date'
 
 const [posts, diaryEntries] = await Promise.all([
   fetchAllBlogs(),
@@ -71,7 +71,7 @@ const latestDiaryEntries = filterDiaries(diaryEntries, {
       <ul class="diary-list">
         {latestDiaryEntries.map((entry, i) => (
           <li class="diary-item">
-            <span class="diary-date">{entry.data.date.toLocaleDateString('ja-JP')}</span>
+            <span class="diary-date">{formatDate(entry.data.date)}</span>
             <a href={getDiaryPath(entry.data.date)} class="diary-link">
               {entry.data.title}
             </a>
@@ -96,7 +96,7 @@ const latestDiaryEntries = filterDiaries(diaryEntries, {
         {homePagePosts.map((post, i) => (
           <li class="blog-item">
             <div class="blog-item-header">
-              <span class="blog-date">{post.data.date.toLocaleDateString('ja-JP')}</span>
+              <span class="blog-date">{formatDate(post.data.date)}</span>
               <a href={`/blog/${post.id}`} class="blog-link">
                 {post.data.title}
               </a>

@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro'
 import ArticleContent from '../components/ArticleContent.astro';
 import type { UnifiedDiaryEntry } from '../utils/content-fetcher'
+import { formatDate } from '../utils/date';
 
 interface Props {
   entry: UnifiedDiaryEntry
@@ -30,7 +31,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <div class="flex flex-col sm:flex-row gap-2 sm:gap-6 text-gray-600 dark:text-gray-300">
         <div class="flex items-center">
           <span class="font-semibold mr-2 min-w-[2.5em]">日付:</span>
-          <span>{date.toLocaleDateString('ja-JP')}</span>
+          <span>{formatDate(date)}</span>
         </div>
         {weather && <div class="flex items-center">
           <span class="font-semibold mr-2 min-w-[2.5em]">天気:</span>

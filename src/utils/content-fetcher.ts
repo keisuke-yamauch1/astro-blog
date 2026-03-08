@@ -1,4 +1,5 @@
 import { microCMSClient, type MicroCMSBlog, type MicroCMSDiary, type MicroCMSEmonicle } from '../lib/microcms';
+import { getDateParts } from './date';
 
 // Unified Blog Entry型
 export interface UnifiedBlogEntry {
@@ -83,9 +84,7 @@ function convertMicroCMSBlogToEntry(cms: MicroCMSBlog): UnifiedBlogEntry {
 function convertMicroCMSDiaryToEntry(cms: MicroCMSDiary): UnifiedDiaryEntry {
   // 日付からslugを生成（YYYY/MM/DD形式）
   const dateObj = new Date(cms.date);
-  const year = dateObj.getFullYear();
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
+  const { year, month, day } = getDateParts(dateObj);
   const slug = `${year}/${month}/${day}`;
 
   return {

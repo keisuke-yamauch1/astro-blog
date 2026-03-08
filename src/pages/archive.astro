@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { fetchAllBlogs } from '../utils/content-fetcher';
 import { filterPublishedPosts, sortPostsByDate } from '../utils/posts';
 import PostDate from '../components/PostDate.astro';
+import { getDateParts } from '../utils/date';
 
 const posts = await fetchAllBlogs();
 const publishedPosts = filterPublishedPosts(posts);
@@ -10,7 +11,7 @@ const sortedPosts = sortPostsByDate(publishedPosts);
 
 // Group posts by year
 const postsByYear = sortedPosts.reduce((acc, post) => {
-  const year = post.data.date.getFullYear();
+  const year = Number(getDateParts(post.data.date).year);
   if (!acc[year]) {
     acc[year] = [];
   }

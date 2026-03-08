@@ -8,6 +8,7 @@ import {
   type MicroCMSDiary,
   type MicroCMSEmonicle,
 } from '../lib/microcms';
+import { formatDate } from '../utils/date';
 
 interface PreviewContainerProps {
   serviceDomain: string;
@@ -167,7 +168,7 @@ function BlogPreview({ content }: { content: MicroCMSBlog }) {
           {content.title}
         </h1>
         <div class="mb-6 text-gray-600 dark:text-gray-300">
-          <time>{new Date(content.date).toLocaleDateString('ja-JP')}</time>
+          <time>{formatDate(new Date(content.date))}</time>
         </div>
         {content.tags && content.tags.length > 0 && (
           <div class="flex flex-wrap gap-2">
@@ -215,7 +216,7 @@ function DiaryPreview({ content }: { content: MicroCMSDiary }) {
         <div class="flex flex-col sm:flex-row gap-2 sm:gap-6 text-gray-600 dark:text-gray-300">
           <div class="flex items-center">
             <span class="font-semibold mr-2 min-w-[2.5em]">日付:</span>
-            <span>{new Date(content.date).toLocaleDateString('ja-JP')}</span>
+            <span>{formatDate(new Date(content.date))}</span>
           </div>
           {content.weather && (
             <div class="flex items-center">
@@ -255,7 +256,7 @@ function EmoniclePreview({ content }: { content: MicroCMSEmonicle }) {
           {content.title}
         </h1>
         <div class="mb-6 text-gray-600 dark:text-gray-300">
-          <time>{new Date(content.date).toLocaleDateString('ja-JP')}</time>
+          <time>{formatDate(new Date(content.date))}</time>
         </div>
       </header>
       <div
