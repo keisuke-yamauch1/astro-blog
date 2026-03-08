@@ -3,9 +3,11 @@ import HatenaStar from './HatenaStar.astro';
 
 interface Props {
   class?: string;
+  url?: string;
+  title?: string;
 }
 
-const { class: className = '' } = Astro.props;
+const { class: className = '', url, title } = Astro.props;
 ---
 
 <div
@@ -25,7 +27,7 @@ const { class: className = '' } = Astro.props;
   ]}
 >
   <slot />
-  <HatenaStar />
+  <HatenaStar url={url} title={title} />
 </div>
 
 <style>

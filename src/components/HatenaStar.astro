@@ -1,20 +1,29 @@
 ---
 // はてなスターのアバター表示モード用のコンポーネント
 // 新しいstar.jsスクリプトを使用して、data属性で設定を行います
+
+interface Props {
+  url?: string;
+  title?: string;
+}
+
+const { url, title } = Astro.props;
 ---
 
 <!-- はてなスターのコンテナ（data属性で設定） -->
 <div
   class="hatena-star-container my-4"
   data-hatena-star-container
-  data-hatena-star-variant="profile-icon">
+  data-hatena-star-variant="profile-icon"
+  data-hatena-star-url={url || ''}
+  data-hatena-star-title={title || ''}>
   <span data-hatena-star=""></span>
 </div>
 
 <!-- 新しいはてなスタースクリプト -->
 <script type="text/javascript" src="https://s.hatena.ne.jp/js/widget/star.js"></script>
 
-<!-- URLとタイトルを動的に設定するスクリプト -->
+<!-- URLとタイトルを動的に設定するスクリプト（propsがない場合のフォールバック） -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('[data-hatena-star-container]');
@@ -22,12 +31,17 @@
     const titleEl = document.querySelector('h1');
 
     if (container && postUrl && titleEl) {
-      // ページのURLとタイトルをdata属性に設定
-      const url = postUrl.href || postUrl.getAttribute('href') || window.location.href;
-      const title = titleEl.textContent?.trim() || document.title;
+      // data属性が空の場合のみ設定
+      if (!container.getAttribute('data-hatena-star-url')) {
+        let url = postUrl.href || postUrl.getAttribute('href') || window.location.href;
+        const title = titleEl.textContent?.trim() || document.title;
 
-      container.setAttribute('data-hatena-star-url', url);
-      container.setAttribute('data-hatena-star-title', title);
+        // 末尾のスラッシュを削除（はてなスターのURL正規化のため）
+        url = url.replace(/\/$/, '');
+
+        container.setAttribute('data-hatena-star-url', url);
+        container.setAttribute('data-hatena-star-title', title);
+      }
     }
   });
 </script>

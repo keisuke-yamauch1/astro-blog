@@ -27,7 +27,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       </div>
       {tags && <PostTags tags={tags} />}
     </header>
-    <ArticleContent>
+    <ArticleContent url={canonicalURL.href.replace(/\/$/, '')} title={title}>
       <slot />
     </ArticleContent>
   </article>
