@@ -1,26 +1,21 @@
 ---
-// このコンポーネントは、自分自身で完結するため、Propsは不要です。
----
-<div id="hatena-star-entry-container" class="my-4"></div>
+interface Props {
+  url: string;
+  title: string;
+}
 
-<script type="text/javascript" src="https://s.hatena.ne.jp/js/HatenaStar.js" charset="utf-8"></script>
-<script define:vars={{
-    pageUri: '.post-url',
-    pageTitle: 'h1',
-    containerSelector: '#hatena-star-entry-container'
-  }}
->
-  document.addEventListener('DOMContentLoaded', () => {
-    if (typeof Hatena !== 'undefined' && Hatena.Star) {
-      Hatena.Star.SiteConfig = {
-        entryNodes: {
-          'article': {
-            uri: pageUri,
-            title: pageTitle,
-            container: containerSelector,
-          }
-        }
-      };
-    }
-  });
-</script>
+const { url, title } = Astro.props;
+
+// タイトルを30文字に切り詰め
+const truncatedTitle = title && title.length > 30 ? title.slice(0, 30) + '...' : (title || '');
+---
+
+<div
+  class="hatena-star-container my-4"
+  data-hatena-star-container
+  data-hatena-star-url={url}
+  data-hatena-star-title={truncatedTitle}
+  data-hatena-star-variant="profile-icon">
+</div>
+
+<script type="text/javascript" src="https://s.hatena.ne.jp/js/widget/star.js"></script>
