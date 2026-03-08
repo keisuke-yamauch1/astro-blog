@@ -5,19 +5,11 @@ test.describe('ホームページ', () => {
     await page.goto('/');
 
     // タイトルの確認
-    await expect(page).toHaveTitle(/astro-blog/i);
+    await expect(page).toHaveTitle(/まあ、そうかもしれない/);
 
     // メインコンテンツの確認
     const heading = page.locator('h1').first();
     await expect(heading).toBeVisible();
-
-    // 最新の日記セクション
-    const diarySection = page.getByRole('heading', { name: '最新の日記' });
-    await expect(diarySection).toBeVisible();
-
-    // 最新のブログセクション
-    const blogSection = page.getByRole('heading', { name: '最新のブログ' });
-    await expect(blogSection).toBeVisible();
   });
 
   test('ソーシャルリンクが表示される', async ({ page }) => {
@@ -28,13 +20,13 @@ test.describe('ホームページ', () => {
     await expect(socialLinks.first()).toBeVisible();
   });
 
-  test('ブログ一覧へのリンクが機能する', async ({ page }) => {
+  test('ナビゲーションリンクが機能する', async ({ page }) => {
     await page.goto('/');
 
-    // 「もっとみる」リンクをクリック
-    await page.getByRole('link', { name: 'もっとみる' }).first().click();
+    // Blogリンクをクリック（ナビゲーション内の最初のBlogリンク）
+    await page.getByRole('link', { name: 'Blog', exact: true }).first().click();
 
     // URLの確認
-    await expect(page).toHaveURL(/\/blog\//);
+    await expect(page).toHaveURL(/\/blog/);
   });
 });

@@ -20,8 +20,12 @@ test.describe('ブログ一覧ページ', () => {
     const firstArticleLink = page.locator('article a, .blog-preview a').first();
     await firstArticleLink.click();
 
-    // 個別記事ページに遷移していることを確認
-    await expect(page).toHaveURL(/\/blog\/\d+/);
+    // 個別記事ページに遷移していることを確認（microCMSのURL形式に対応）
+    await expect(page).toHaveURL(/\/blog\/[a-z0-9_-]+/i);
+
+    // 記事タイトルが表示される
+    const articleTitle = page.locator('h1');
+    await expect(articleTitle).toBeVisible();
   });
 
   test('ページネーションが機能する', async ({ page }) => {

@@ -15,7 +15,9 @@
       "WebSearch",
       "WebFetch(domain:developer.hatena.ne.jp)",
       "Bash(cat *)",
-      "Bash(tmux attach-session:*)"
+      "Bash(tmux attach-session:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }
