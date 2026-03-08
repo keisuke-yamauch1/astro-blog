@@ -43,7 +43,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         </div>}
       </div>
     </header>
-    <ArticleContent class="diary-content" url={canonicalURL.href.replace(/\/$/, '')} title={title}>
+    <ArticleContent class="diary-content">
       <slot />
     </ArticleContent>
   </article>
