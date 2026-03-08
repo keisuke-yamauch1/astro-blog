@@ -17,7 +17,10 @@
       "Bash(cat *)",
       "Bash(tmux attach-session:*)",
       "Bash(ls:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_close"
     ],
     "deny": []
   }

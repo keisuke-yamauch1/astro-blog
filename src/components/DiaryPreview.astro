@@ -1,10 +1,10 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { UnifiedDiaryEntry } from '../utils/content-fetcher';
 import PreviewCard from './PreviewCard.astro';
 import { getDiaryPath } from '../utils/date';
 
 interface Props {
-  entry: CollectionEntry<'diary'>;
+  entry: UnifiedDiaryEntry;
 }
 
 const { entry } = Astro.props;

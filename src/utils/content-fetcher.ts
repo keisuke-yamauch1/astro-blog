@@ -1,5 +1,3 @@
-import { getCollection } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
 import { microCMSClient, type MicroCMSBlog, type MicroCMSDiary, type MicroCMSEmonicle } from '../lib/microcms';
 
 // Unified Blog Entry型
@@ -139,147 +137,72 @@ function convertMicroCMSEmonicleToEntry(cms: MicroCMSEmonicle): UnifiedEmonicleE
   };
 }
 
-// ハイブリッドフェッチ: Markdown + microCMS
+// microCMSからブログを取得
 export async function fetchAllBlogs(): Promise<UnifiedBlogEntry[]> {
-  try {
-    // Markdownエントリー取得
-    const markdownPosts = await getCollection('blog');
-    const mdEntries: UnifiedBlogEntry[] = markdownPosts.map(post => ({
-      ...post,
-      body: '', // Content Collectionsではbodyは直接アクセス不可
-      source: 'markdown' as const,
-    }));
+  let allCmsEntries: MicroCMSBlog[] = [];
+  let offset = 0;
+  const limit = 100; // microCMSの最大limit
 
-    // microCMSエントリー取得（ページネーション対応）
-    let allCmsEntries: MicroCMSBlog[] = [];
-    let offset = 0;
-    const limit = 100; // microCMSの最大limit
+  while (true) {
+    const cmsResponse = await microCMSClient.getList<MicroCMSBlog>({
+      endpoint: 'blog',
+      queries: { limit, offset },
+    });
 
-    while (true) {
-      const cmsResponse = await microCMSClient.getList<MicroCMSBlog>({
-        endpoint: 'blog',
-        queries: { limit, offset },
-      });
+    allCmsEntries = [...allCmsEntries, ...cmsResponse.contents];
 
-      allCmsEntries = [...allCmsEntries, ...cmsResponse.contents];
-
-      // 全件取得したら終了
-      if (cmsResponse.contents.length < limit) {
-        break;
-      }
-      offset += limit;
+    // 全件取得したら終了
+    if (cmsResponse.contents.length < limit) {
+      break;
     }
-
-    const cmsEntries = allCmsEntries.map(convertMicroCMSBlogToEntry);
-
-    // 重複排除: microCMSを優先（customIdで比較）
-    const cmsCustomIdSet = new Set(allCmsEntries.map(cms => cms.customId));
-    const uniqueMdEntries = mdEntries.filter(e => e.data.id !== undefined && !cmsCustomIdSet.has(e.data.id));
-
-    // microCMS + ユニークなMarkdownを統合して返す
-    return [...cmsEntries, ...uniqueMdEntries];
-  } catch (error) {
-    console.error('Error fetching blogs:', error);
-    // microCMSでエラーが発生してもMarkdownエントリーは返す
-    const markdownPosts = await getCollection('blog');
-    return markdownPosts.map(post => ({
-      ...post,
-      body: '',
-      source: 'markdown' as const,
-    }));
+    offset += limit;
   }
+
+  return allCmsEntries.map(convertMicroCMSBlogToEntry);
 }
 
+// microCMSから日記を取得
 export async function fetchAllDiaries(): Promise<UnifiedDiaryEntry[]> {
-  try {
-    const markdownEntries = await getCollection('diary');
-    const mdEntries: UnifiedDiaryEntry[] = markdownEntries.map(entry => ({
-      ...entry,
-      body: '',
-      source: 'markdown' as const,
-    }));
+  let allCmsEntries: MicroCMSDiary[] = [];
+  let offset = 0;
+  const limit = 100;
 
-    // microCMSエントリー取得（ページネーション対応）
-    let allCmsEntries: MicroCMSDiary[] = [];
-    let offset = 0;
-    const limit = 100;
+  while (true) {
+    const cmsResponse = await microCMSClient.getList<MicroCMSDiary>({
+      endpoint: 'diary',
+      queries: { limit, offset },
+    });
 
-    while (true) {
-      const cmsResponse = await microCMSClient.getList<MicroCMSDiary>({
-        endpoint: 'diary',
-        queries: { limit, offset },
-      });
+    allCmsEntries = [...allCmsEntries, ...cmsResponse.contents];
 
-      allCmsEntries = [...allCmsEntries, ...cmsResponse.contents];
-
-      if (cmsResponse.contents.length < limit) {
-        break;
-      }
-      offset += limit;
+    if (cmsResponse.contents.length < limit) {
+      break;
     }
-
-    const cmsEntries = allCmsEntries.map(convertMicroCMSDiaryToEntry);
-
-    // 重複排除: microCMSを優先
-    const cmsSlugSet = new Set(cmsEntries.map(e => e.slug));
-    const uniqueMdEntries = mdEntries.filter(e => !cmsSlugSet.has(e.slug));
-
-    // microCMS + ユニークなMarkdownを統合して返す
-    return [...cmsEntries, ...uniqueMdEntries];
-  } catch (error) {
-    console.error('Error fetching diaries:', error);
-    const markdownEntries = await getCollection('diary');
-    return markdownEntries.map(entry => ({
-      ...entry,
-      body: '',
-      source: 'markdown' as const,
-    }));
+    offset += limit;
   }
+
+  return allCmsEntries.map(convertMicroCMSDiaryToEntry);
 }
 
+// microCMSからエモニクルを取得
 export async function fetchAllEmonicles(): Promise<UnifiedEmonicleEntry[]> {
-  try {
-    const markdownEntries = await getCollection('emonicle');
-    const mdEntries: UnifiedEmonicleEntry[] = markdownEntries.map(entry => ({
-      ...entry,
-      body: '',
-      source: 'markdown' as const,
-    }));
+  let allCmsEntries: MicroCMSEmonicle[] = [];
+  let offset = 0;
+  const limit = 100;
 
-    // microCMSエントリー取得（ページネーション対応）
-    let allCmsEntries: MicroCMSEmonicle[] = [];
-    let offset = 0;
-    const limit = 100;
+  while (true) {
+    const cmsResponse = await microCMSClient.getList<MicroCMSEmonicle>({
+      endpoint: 'emonicle',
+      queries: { limit, offset },
+    });
 
-    while (true) {
-      const cmsResponse = await microCMSClient.getList<MicroCMSEmonicle>({
-        endpoint: 'emonicle',
-        queries: { limit, offset },
-      });
+    allCmsEntries = [...allCmsEntries, ...cmsResponse.contents];
 
-      allCmsEntries = [...allCmsEntries, ...cmsResponse.contents];
-
-      if (cmsResponse.contents.length < limit) {
-        break;
-      }
-      offset += limit;
+    if (cmsResponse.contents.length < limit) {
+      break;
     }
-
-    const cmsEntries = allCmsEntries.map(convertMicroCMSEmonicleToEntry);
-
-    // 重複排除: microCMSを優先（customIdで比較）
-    const cmsCustomIdSet = new Set(allCmsEntries.map(cms => cms.customId));
-    const uniqueMdEntries = mdEntries.filter(e => e.data.id !== undefined && !cmsCustomIdSet.has(e.data.id));
-
-    // microCMS + ユニークなMarkdownを統合して返す
-    return [...cmsEntries, ...uniqueMdEntries];
-  } catch (error) {
-    console.error('Error fetching emonicles:', error);
-    const markdownEntries = await getCollection('emonicle');
-    return markdownEntries.map(entry => ({
-      ...entry,
-      body: '',
-      source: 'markdown' as const,
-    }));
+    offset += limit;
   }
+
+  return allCmsEntries.map(convertMicroCMSEmonicleToEntry);
 }

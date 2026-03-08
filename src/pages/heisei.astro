@@ -3,14 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import BlogPreview from '../components/BlogPreview.astro'
 import DiaryPreview from '../components/DiaryPreview.astro'
 import SocialLinks from '../components/SocialLinks.astro'
-import { getCollection } from 'astro:content'
+import { fetchAllBlogs, fetchAllDiaries } from '../utils/content-fetcher'
 import { filterPosts, filterDiaries } from '../utils/posts'
 import { siteConfig } from '../config'
 import { getDiaryPath } from '../utils/date'
 
 const [posts, diaryEntries] = await Promise.all([
-  getCollection('blog'),
-  getCollection('diary')
+  fetchAllBlogs(),
+  fetchAllDiaries()
 ]);
 
 // Configure homepage post filtering
@@ -97,7 +97,7 @@ const latestDiaryEntries = filterDiaries(diaryEntries, {
           <li class="blog-item">
             <div class="blog-item-header">
               <span class="blog-date">{post.data.date.toLocaleDateString('ja-JP')}</span>
-              <a href={`/blog/${post.data.id}`} class="blog-link">
+              <a href={`/blog/${post.id}`} class="blog-link">
                 {post.data.title}
               </a>
               {i === 0 && <span class="blink-new">NEW!</span>}

@@ -2,10 +2,10 @@
 import BaseLayout from './BaseLayout.astro'
 import PostDate from '../components/PostDate.astro'
 import ArticleContent from '../components/ArticleContent.astro';
-import type { CollectionEntry } from 'astro:content'
+import type { UnifiedEmonicleEntry } from '../utils/content-fetcher'
 
 interface Props {
-  post: CollectionEntry<'emonicle'>
+  post: UnifiedEmonicleEntry
 }
 
 const { post } = Astro.props

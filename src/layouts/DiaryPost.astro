@@ -1,10 +1,10 @@
 ---
 import BaseLayout from './BaseLayout.astro'
 import ArticleContent from '../components/ArticleContent.astro';
-import type { CollectionEntry } from 'astro:content'
+import type { UnifiedDiaryEntry } from '../utils/content-fetcher'
 
 interface Props {
-  entry: CollectionEntry<'diary'>
+  entry: UnifiedDiaryEntry
   isPreview?: boolean
 }
 

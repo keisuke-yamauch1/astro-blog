@@ -1,11 +1,11 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { UnifiedBlogEntry } from '../utils/content-fetcher';
 import PreviewCard from './PreviewCard.astro';
 import PostDate from './PostDate.astro';
 import PostTags from './PostTags.astro';
 
 interface Props {
-  post: CollectionEntry<'blog'>;
+  post: UnifiedBlogEntry;
 }
 
 const { post } = Astro.props;

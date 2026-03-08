@@ -1,4 +1,4 @@
-import type { CollectionEntry } from 'astro:content';
+import type { UnifiedBlogEntry, UnifiedDiaryEntry, UnifiedEmonicleEntry } from './content-fetcher';
 import { isPublished } from './date';
 
 // Generic types for content with date
@@ -81,15 +81,15 @@ export interface PostFilter {
   excludeTags?: string[];
 }
 
-export function sortPostsByDate(posts: CollectionEntry<'blog'>[]): CollectionEntry<'blog'>[] {
+export function sortPostsByDate(posts: UnifiedBlogEntry[]): UnifiedBlogEntry[] {
   return sortByDate(posts);
 }
 
-export function filterPublishedPosts(posts: CollectionEntry<'blog'>[]): CollectionEntry<'blog'>[] {
+export function filterPublishedPosts(posts: UnifiedBlogEntry[]): UnifiedBlogEntry[] {
   return filterPublished(posts);
 }
 
-export function filterPosts(posts: CollectionEntry<'blog'>[], filter: PostFilter = {}): CollectionEntry<'blog'>[] {
+export function filterPosts(posts: UnifiedBlogEntry[], filter: PostFilter = {}): UnifiedBlogEntry[] {
   return filterWithTags(posts, {
     maxEntries: filter.maxPosts,
     tags: filter.tags,
@@ -97,11 +97,11 @@ export function filterPosts(posts: CollectionEntry<'blog'>[], filter: PostFilter
   });
 }
 
-export function getPostsByTag(posts: CollectionEntry<'blog'>[], tag: string): CollectionEntry<'blog'>[] {
+export function getPostsByTag(posts: UnifiedBlogEntry[], tag: string): UnifiedBlogEntry[] {
   return filterPublished(posts).filter(post => post.data.tags?.includes(tag));
 }
 
-export function getAllTags(posts: CollectionEntry<'blog'>[]): string[] {
+export function getAllTags(posts: UnifiedBlogEntry[]): string[] {
   const publishedPosts = filterPublished(posts);
   return [...new Set(publishedPosts.flatMap(post => post.data.tags || []))].sort();
 }
@@ -111,15 +111,15 @@ export interface EmonicleFilter {
   maxPosts?: number;
 }
 
-export function sortEmoniclesByDate(posts: CollectionEntry<'emonicle'>[]): CollectionEntry<'emonicle'>[] {
+export function sortEmoniclesByDate(posts: UnifiedEmonicleEntry[]): UnifiedEmonicleEntry[] {
   return sortByDate(posts);
 }
 
-export function filterPublishedEmonicles(posts: CollectionEntry<'emonicle'>[]): CollectionEntry<'emonicle'>[] {
+export function filterPublishedEmonicles(posts: UnifiedEmonicleEntry[]): UnifiedEmonicleEntry[] {
   return filterPublished(posts);
 }
 
-export function filterEmonicles(posts: CollectionEntry<'emonicle'>[], filter: EmonicleFilter = {}): CollectionEntry<'emonicle'>[] {
+export function filterEmonicles(posts: UnifiedEmonicleEntry[], filter: EmonicleFilter = {}): UnifiedEmonicleEntry[] {
   return filterAndSort(posts, { maxEntries: filter.maxPosts });
 }
 
@@ -128,14 +128,14 @@ export interface DiaryFilter {
   maxEntries?: number;
 }
 
-export function sortDiariesByDate(entries: CollectionEntry<'diary'>[]): CollectionEntry<'diary'>[] {
+export function sortDiariesByDate(entries: UnifiedDiaryEntry[]): UnifiedDiaryEntry[] {
   return sortByDate(entries);
 }
 
-export function filterPublishedDiaries(entries: CollectionEntry<'diary'>[]): CollectionEntry<'diary'>[] {
+export function filterPublishedDiaries(entries: UnifiedDiaryEntry[]): UnifiedDiaryEntry[] {
   return filterPublished(entries);
 }
 
-export function filterDiaries(entries: CollectionEntry<'diary'>[], filter: DiaryFilter = {}): CollectionEntry<'diary'>[] {
+export function filterDiaries(entries: UnifiedDiaryEntry[], filter: DiaryFilter = {}): UnifiedDiaryEntry[] {
   return filterAndSort(entries, filter);
 }

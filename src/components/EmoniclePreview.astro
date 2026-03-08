@@ -1,10 +1,10 @@
 ---
-import type { CollectionEntry } from 'astro:content';
+import type { UnifiedEmonicleEntry } from '../utils/content-fetcher';
 import PreviewCard from './PreviewCard.astro';
 import PostDate from './PostDate.astro';
 
 interface Props {
-  post: CollectionEntry<'emonicle'>;
+  post: UnifiedEmonicleEntry;
 }
 
 const { post } = Astro.props;
