@@ -4,7 +4,7 @@ import BlogPreview from '../components/BlogPreview.astro'
 import DiaryPreview from '../components/DiaryPreview.astro'
 import SocialLinks from '../components/SocialLinks.astro'
 import { getEntry } from 'astro:content'
-import { fetchAllBlogs, fetchAllDiaries } from '../utils/content-fetcher'
+import { fetchAllBlogs, fetchAllDiaries } from '../lib/microcms'
 import { filterPosts, filterDiaries } from '../utils/posts'
 import { siteConfig } from '../config'
 

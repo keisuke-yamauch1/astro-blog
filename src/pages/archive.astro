@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { fetchAllBlogs } from '../utils/content-fetcher';
+import { fetchAllBlogs } from '../lib/microcms';
 import { filterPublishedPosts, sortPostsByDate } from '../utils/posts';
 import PostDate from '../components/PostDate.astro';
 import { getDateParts } from '../utils/date';

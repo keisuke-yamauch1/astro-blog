@@ -7,7 +7,7 @@ import {
   type MicroCMSBlog,
   type MicroCMSDiary,
   type MicroCMSEmonicle,
-} from '../lib/microcms';
+} from '../lib/microcms/index';
 import { formatDate } from '../utils/date';
 
 interface PreviewContainerProps {

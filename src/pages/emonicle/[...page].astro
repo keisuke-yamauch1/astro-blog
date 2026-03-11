@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import EmoniclePreview from '../../components/EmoniclePreview.astro';
 import Pagination from '../../components/Pagination.astro';
-import { fetchAllEmonicles } from '../../utils/content-fetcher';
+import { fetchAllEmonicles } from '../../lib/microcms';
 import { filterPublishedEmonicles, sortEmoniclesByDate } from '../../utils/posts';
 
 export async function getStaticPaths({ paginate }) {

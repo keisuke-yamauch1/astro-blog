@@ -1,4 +1,4 @@
-import { fetchAllBlogs, fetchAllDiaries, fetchAllEmonicles } from '../../utils/content-fetcher';
+import { fetchAllBlogs, fetchAllDiaries, fetchAllEmonicles } from '../../lib/microcms';
 
 export async function GET() {
   const blogPosts = await fetchAllBlogs();

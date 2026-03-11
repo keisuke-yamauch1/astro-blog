@@ -1,6 +1,6 @@
 import rss from '@astrojs/rss';
 import { siteConfig } from '../config';
-import { fetchAllBlogs, fetchAllDiaries, fetchAllEmonicles } from '../utils/content-fetcher';
+import { fetchAllBlogs, fetchAllDiaries, fetchAllEmonicles } from '../lib/microcms';
 import { filterPublishedPosts, filterPublishedEmonicles } from '../utils/posts';
 import { getDiaryPath } from '../utils/date';
 
