@@ -1,7 +1,6 @@
 // Blog型定義
 export interface MicroCMSBlog {
   id: string;
-  customId: number;
   title: string;
   description?: string;
   content: string;
@@ -35,7 +34,6 @@ export interface MicroCMSDiary {
 // Emonicle型定義
 export interface MicroCMSEmonicle {
   id: string;
-  customId: number;
   title: string;
   description?: string;
   content: string;
