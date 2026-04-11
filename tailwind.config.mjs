@@ -54,11 +54,19 @@ export default {
               marginTop: '0',
               marginBottom: '0',
             },
+            p: {
+              marginTop: '0',
+              marginBottom: '0',
+            },
           },
         },
         lg: {
           css: {
             li: {
+              marginTop: '0',
+              marginBottom: '0',
+            },
+            p: {
               marginTop: '0',
               marginBottom: '0',
             },
