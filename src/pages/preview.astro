@@ -28,6 +28,13 @@ if (!serviceDomain || !apiKey) {
 }
 ---
 
+<style>
+  :global(.prose p:empty),
+  :global(.prose p:has(> br:only-child)) {
+    min-height: 1em;
+  }
+</style>
+
 <BaseLayout title="プレビュー | microCMS" description="microCMSコンテンツのプレビュー">
   <!-- バリデーションエラー表示 -->
   {validationError && (
