@@ -53,7 +53,8 @@ const htmlContent = isMicroCMS ? Content() : null;
   }
 
   /* 空の段落も高さを持つようにする */
-  :global(.microcms-content p:empty) {
+  :global(.microcms-content p:empty),
+  :global(.microcms-content p:has(> br:only-child)) {
     min-height: 1em;
   }
 </style>
