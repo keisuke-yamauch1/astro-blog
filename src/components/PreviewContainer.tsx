@@ -195,7 +195,7 @@ function BlogPreview({ content }: { content: MicroCMSBlog }) {
         )}
       </header>
       <div
-        class="prose prose-lg dark:prose-invert max-w-none"
+        class="prose prose-lg dark:prose-invert max-w-none [&_.iframely-embed]:my-6"
         dangerouslySetInnerHTML={{ __html: content.content }}
       />
     </>
@@ -244,7 +244,7 @@ function DiaryPreview({ content }: { content: MicroCMSDiary }) {
         </div>
       </header>
       <div
-        class="prose prose-lg dark:prose-invert max-w-none diary-content"
+        class="prose prose-lg dark:prose-invert max-w-none diary-content [&_.iframely-embed]:my-6"
         dangerouslySetInnerHTML={{ __html: content.content }}
       />
     </>
@@ -271,7 +271,7 @@ function EmoniclePreview({ content }: { content: MicroCMSEmonicle }) {
         </div>
       </header>
       <div
-        class="prose prose-lg dark:prose-invert max-w-none"
+        class="prose prose-lg dark:prose-invert max-w-none [&_.iframely-embed]:my-6"
         dangerouslySetInnerHTML={{ __html: content.content }}
       />
     </>
