@@ -46,7 +46,7 @@ export default function PreviewContainer(props: PreviewContainerProps) {
     setContentType(type);
   }, []);
 
-  // SWRでコンテンツをフェッチ（3秒ごとに自動更新）
+  // コンテンツ更新後にiframelyを再初期化
   const { data, error: swrError, isLoading } = useSWR(
     contentId && draftKey && contentType
       ? ['preview', contentId, draftKey, contentType]
@@ -58,6 +58,17 @@ export default function PreviewContainer(props: PreviewContainerProps) {
       revalidateOnReconnect: true,
     }
   );
+
+  // コンテンツ更新後にiframelyを再初期化
+  useEffect(() => {
+    if (data && typeof window !== 'undefined') {
+      setTimeout(() => {
+        if ((window as any).iframely) {
+          (window as any).iframely.load();
+        }
+      }, 100);
+    }
+  }, [data]);
 
   // エラーハンドリング
   if (error) {
