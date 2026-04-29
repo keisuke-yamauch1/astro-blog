@@ -1,0 +1,57 @@
+name: Discord Notification
+
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord (Issue)
+        if: github.event_name == 'issues'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"[Issue #${{ github.event.issue.number }}] ${{ github.event.issue.title }}\",
+                \"url\": \"${{ github.event.issue.html_url }}\",
+                \"description\": \"${{ github.event.issue.body && '投稿内容あり' || '本文なし' }}\",
+                \"color\": 5814783,
+                \"author\": {
+                  \"name\": \"${{ github.event.issue.user.login }}\",
+                  \"icon_url\": \"${{ github.event.issue.user.avatar_url }}\"
+                },
+                \"footer\": {
+                  \"text\": \"${{ github.repository }}\"
+                }
+              }]
+            }" \
+            "$DISCORD_WEBHOOK_URL"
+
+      - name: Notify Discord (Pull Request)
+        if: github.event_name == 'pull_request'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"[PR #${{ github.event.pull_request.number }}] ${{ github.event.pull_request.title }}\",
+                \"url\": \"${{ github.event.pull_request.html_url }}\",
+                \"description\": \"${{ github.event.pull_request.base.ref }} ← ${{ github.event.pull_request.head.ref }}\",
+                \"color\": 5832543,
+                \"author\": {
+                  \"name\": \"${{ github.event.pull_request.user.login }}\",
+                  \"icon_url\": \"${{ github.event.pull_request.user.avatar_url }}\"
+                },
+                \"footer\": {
+                  \"text\": \"${{ github.repository }}\"
+                }
+              }]
+            }" \
+            "$DISCORD_WEBHOOK_URL"
