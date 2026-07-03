@@ -36,7 +36,6 @@
     "fast-xml-parser": "^5.3.3",
     "glob": "^13.0.6",
     "gray-matter": "^4.0.3",
-    "microcms-js-sdk": "^3.3.0",
     "octokit": "^3.2.2",
     "preact": "^10.28.4",
     "rehype-pretty-code": "^0.14.0",

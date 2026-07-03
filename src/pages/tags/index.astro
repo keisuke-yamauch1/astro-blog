@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { fetchAllBlogs } from '../../lib/microcms';
+import { fetchAllBlogs } from '../../lib/content';
 import { getAllTags, getPostsByTag } from '../../utils/posts';
 
 const posts = await fetchAllBlogs();

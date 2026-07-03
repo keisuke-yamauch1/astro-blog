@@ -1,4 +1,4 @@
-import type { UnifiedBlogEntry, UnifiedDiaryEntry, UnifiedEmonicleEntry } from '../lib/microcms';
+import type { UnifiedBlogEntry, UnifiedDiaryEntry, UnifiedEmonicleEntry } from '../lib/content';
 import { isPublished } from './date';
 
 // Generic types for content with date
