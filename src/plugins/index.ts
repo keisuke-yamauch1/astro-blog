@@ -1,4 +1,5 @@
 // Remark plugins
+export { remarkBlankLines } from './remark-blank-lines';
 export { remarkBreaksForDiary } from './remark-breaks-for-diary';
 export { remarkSpotifyEmbed } from './remark-spotify-embed';
 export { remarkMediaEmbed } from './remark-media-embed';

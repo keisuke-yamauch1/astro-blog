@@ -9,6 +9,7 @@ import sitemap from '@astrojs/sitemap';
 import preact from '@astrojs/preact';
 
 import {
+  remarkBlankLines,
   remarkBreaksForDiary,
   remarkSpotifyEmbed,
   remarkMediaEmbed,
@@ -39,7 +40,7 @@ export default defineConfig({
     mdx()
   ],
   markdown: {
-    remarkPlugins: [remarkSpotifyEmbed, remarkMediaEmbed, remarkBreaksForDiary],
+    remarkPlugins: [remarkBlankLines, remarkSpotifyEmbed, remarkMediaEmbed, remarkBreaksForDiary],
     rehypePlugins: [
       [rehypePrettyCode, {
         theme: {
