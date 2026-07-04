@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('microCMS統合テスト', () => {
+test.describe('HTMLコンテンツ統合テスト', () => {
   test.describe('検索機能', () => {
     test('検索モーダルが開く', async ({ page }) => {
       await page.goto('/');
@@ -14,7 +14,7 @@ test.describe('microCMS統合テスト', () => {
       }
     });
 
-    test('microCMS記事が検索できる', async ({ page }) => {
+    test('記事が検索できる', async ({ page }) => {
       await page.goto('/');
 
       const searchButton = page.locator('#search-button, button:has-text("Search")');
@@ -100,7 +100,7 @@ test.describe('microCMS統合テスト', () => {
   });
 
   test.describe('HTMLコンテンツレンダリング', () => {
-    test('microCMS記事のHTMLが正しく表示される', async ({ page }) => {
+    test('format:html 記事のHTMLが正しく表示される', async ({ page }) => {
       await page.goto('/blog');
 
       const firstArticle = page.locator('article a, .blog-preview a').first();
