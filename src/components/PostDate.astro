@@ -6,8 +6,13 @@ interface Props {
 }
 
 const { date } = Astro.props;
+
+// datetime 属性は表示（JST日付）と一致するよう +09:00 付き ISO で出す
+const jstIso = new Date(date.getTime() + 9 * 60 * 60 * 1000)
+  .toISOString()
+  .replace('Z', '+09:00');
 ---
 
-<time datetime={date.toISOString()} class="text-gray-600 dark:text-gray-400">
+<time datetime={jstIso} class="text-gray-600 dark:text-gray-400">
   {formatDate(date)}
 </time>
