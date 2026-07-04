@@ -1,14 +1,14 @@
 ---
 import { fetchAllEmonicles } from '../../lib/content';
 import EmoniclePost from '../../layouts/EmoniclePost.astro';
-import { filterPublishedEmonicles } from '../../utils/posts';
 import { validateIdPost } from '../../utils/validation';
+import { isPublished } from '../../utils/date';
 
 export async function getStaticPaths() {
+  // 下書き・未来日も含めて全件ページ化（URL直アクセスでプレビュー可能に）。
   const posts = await fetchAllEmonicles();
-  const publishedPosts = filterPublishedEmonicles(posts);
 
-  return publishedPosts.map((post) => ({
+  return posts.map((post) => ({
     params: { id: post.id },
     props: { post },
   }));
@@ -27,9 +27,11 @@ const { Content } = await post.render();
 // microCMSのコンテンツはHTMLとして返される
 const isMicroCMS = post.source === 'microcms';
 const htmlContent = isMicroCMS ? Content() : null;
+
+const preview = Boolean(post.data.draft) || !isPublished(post.data.date);
 ---
 
-<EmoniclePost post={post}>
+<EmoniclePost post={post} preview={preview}>
   {isMicroCMS ? (
     <div set:html={htmlContent} class="microcms-content" />
   ) : (

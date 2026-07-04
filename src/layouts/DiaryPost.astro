@@ -6,21 +6,19 @@ import { formatDate } from '../utils/date';
 
 interface Props {
   entry: UnifiedDiaryEntry
-  isPreview?: boolean
+  preview?: boolean
 }
 
-const { entry, isPreview = false } = Astro.props
-const { title, description, date, weather, condition, image, draft } = entry.data
+const { entry, preview = false } = Astro.props
+const { title, description, date, weather, condition, image } = entry.data
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 
-<BaseLayout title={title} description={description} image={image} ogType="article">
+<BaseLayout title={title} description={description} image={image} ogType="article" noindex={preview}>
   <article class="max-w-3xl mx-auto px-4">
-    {draft && !isPreview && (
-      <div class="bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 mb-8 rounded">
-        <p class="text-yellow-800 dark:text-yellow-200">
-          <strong>下書き:</strong> この記事はまだ公開されていません。
-        </p>
+    {preview && (
+      <div class="mb-6 rounded-lg border border-amber-400 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 text-sm text-amber-700 dark:text-amber-300">
+        下書きプレビュー — このページは一覧・RSS・検索には表示されません
       </div>
     )}
     {image && <img src={image} alt={title} class="w-full h-[400px] object-cover rounded-xl shadow-lg mb-8" loading="eager" />}

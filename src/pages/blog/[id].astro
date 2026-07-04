@@ -1,14 +1,15 @@
 ---
 import { fetchAllBlogs } from '../../lib/content';
 import BlogPost from '../../layouts/BlogPost.astro';
-import { filterPublishedPosts } from '../../utils/posts';
 import { validateIdPost } from '../../utils/validation';
+import { isPublished } from '../../utils/date';
 
 export async function getStaticPaths() {
+  // 下書き・未来日も含めて全件ページ化する（URL直アクセスでプレビュー可能に）。
+  // 一覧・RSS・sitemap 側は従来どおり公開分だけ。
   const posts = await fetchAllBlogs();
-  const publishedPosts = filterPublishedPosts(posts);
 
-  return publishedPosts.map((post) => ({
+  return posts.map((post) => ({
     params: { id: post.id },
     props: { post },
   }));
@@ -27,9 +28,12 @@ const { Content } = await post.render();
 // microCMSのコンテンツはHTMLとして返される
 const isMicroCMS = post.source === 'microcms';
 const htmlContent = isMicroCMS ? Content() : null;
+
+// 下書き or 未来日ならプレビュー扱い（noindex＋バナー）
+const preview = Boolean(post.data.draft) || !isPublished(post.data.date);
 ---
 
-<BlogPost post={post}>
+<BlogPost post={post} preview={preview}>
   {isMicroCMS ? (
     <div set:html={htmlContent} class="microcms-content" />
   ) : (

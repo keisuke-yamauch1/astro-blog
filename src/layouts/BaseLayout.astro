@@ -10,9 +10,10 @@ interface Props {
   image?: string
   ogType?: string
   maxWidth?: 'md' | 'lg' | 'xl' | '2xl'
+  noindex?: boolean
 }
 
-const { title, description = siteConfig.description, image, ogType = 'website', maxWidth = 'md' } = Astro.props
+const { title, description = siteConfig.description, image, ogType = 'website', maxWidth = 'md', noindex = false } = Astro.props
 const ogImage = image ?? `${siteConfig.site}icon.png`
 const currentUrl = Astro.url.href
 
@@ -30,6 +31,7 @@ const maxWidthClass = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />

@@ -1,14 +1,13 @@
 ---
 import { fetchAllDiaries } from '../../../../lib/content';
 import DiaryPost from '../../../../layouts/DiaryPost.astro';
-import { filterPublishedDiaries } from '../../../../utils/posts';
-import { getDateParts, matchesDateParts } from '../../../../utils/date';
+import { getDateParts, matchesDateParts, isPublished } from '../../../../utils/date';
 
 export async function getStaticPaths() {
+  // 下書き・未来日も含めて全件ページ化（URL直アクセスでプレビュー可能に）。
   const entries = await fetchAllDiaries();
-  const publishedEntries = filterPublishedDiaries(entries);
 
-  return publishedEntries.map((entry) => {
+  return entries.map((entry) => {
     const { year, month, day } = getDateParts(entry.data.date);
 
     return {
@@ -31,9 +30,11 @@ const { Content } = await entry.render();
 // microCMSのコンテンツはHTMLとして返される
 const isMicroCMS = entry.source === 'microcms';
 const htmlContent = isMicroCMS ? Content() : null;
+
+const preview = Boolean(entry.data.draft) || !isPublished(entry.data.date);
 ---
 
-<DiaryPost entry={entry}>
+<DiaryPost entry={entry} preview={preview}>
   {isMicroCMS ? (
     <div set:html={htmlContent} class="microcms-content" />
   ) : (
