@@ -11,6 +11,7 @@ import preact from '@astrojs/preact';
 import {
   remarkBreaksForDiary,
   remarkSpotifyEmbed,
+  remarkMediaEmbed,
   rehypeTargetBlank,
   rehypeCodeTitle,
   rehypeImageNotProse,
@@ -38,7 +39,7 @@ export default defineConfig({
     mdx()
   ],
   markdown: {
-    remarkPlugins: [remarkSpotifyEmbed, remarkBreaksForDiary],
+    remarkPlugins: [remarkSpotifyEmbed, remarkMediaEmbed, remarkBreaksForDiary],
     rehypePlugins: [
       [rehypePrettyCode, {
         theme: {

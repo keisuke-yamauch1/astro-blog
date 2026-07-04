@@ -1,0 +1,95 @@
+import type { Root, Paragraph, Link, PhrasingContent, RootContent } from 'mdast';
+import type { Parent } from 'unist';
+import { visit, SKIP } from 'unist-util-visit';
+
+// youtu.be/ID, watch?v=ID, shorts/ID, live/ID, embed/ID（si= 等のクエリは無視）
+const YOUTUBE_PATTERN =
+  /^https:\/\/(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|live\/|embed\/))([A-Za-z0-9_-]{11})/;
+const TWEET_PATTERN =
+  /^https:\/\/(?:x\.com|(?:mobile\.)?twitter\.com)\/[A-Za-z0-9_]+\/status\/\d+/;
+
+/** URL を埋め込み HTML に変換。対象外なら null。 */
+function toEmbedHtml(url: string): string | null {
+  const yt = url.match(YOUTUBE_PATTERN);
+  if (yt) {
+    const id = yt[1];
+    // youtube-nocookie + lazy + aspect-ratio 16/9。?rel=0&hl=en で astro-embed 経由の MDX と表示を揃える。
+    return `<div class="youtube-embed" style="position:relative;aspect-ratio:16/9;margin-bottom:1rem;"><iframe src="https://www.youtube-nocookie.com/embed/${id}?rel=0&hl=en" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>`;
+  }
+  if (TWEET_PATTERN.test(url)) {
+    // widgets.js（BaseLayout でグローバル読み込み済み）が hydrate。失敗時はリンクとして残る。
+    return `<blockquote class="twitter-tweet"><a href="${url}">${url}</a></blockquote>`;
+  }
+  return null;
+}
+
+/** 子 text 1個で value===url の GFM autolink literal か。 */
+function isAutolinkLiteral(node: PhrasingContent): node is Link {
+  if (node.type !== 'link') return false;
+  const link = node as Link;
+  return (
+    link.children.length === 1 &&
+    link.children[0].type === 'text' &&
+    (link.children[0] as { value: string }).value === link.url
+  );
+}
+
+/** その link が段落内で「行として独立」しているか（前後が段落端 or 改行境界）。 */
+function isLineStandalone(children: PhrasingContent[], i: number): boolean {
+  const prev = children[i - 1];
+  const next = children[i + 1];
+  const prevOk = i === 0 || (prev.type === 'text' && (prev as { value: string }).value.endsWith('\n'));
+  const nextOk =
+    i === children.length - 1 || (next.type === 'text' && (next as { value: string }).value.startsWith('\n'));
+  return prevOk && nextOk;
+}
+
+/** 境界 text の余分な `\n` を1個だけ削る（remarkBreaksForDiary の孤立 <br> 防止）。空になった text は捨てる。 */
+function trimBoundary(children: PhrasingContent[], side: 'end' | 'start'): PhrasingContent[] {
+  if (children.length === 0) return children;
+  const idx = side === 'end' ? children.length - 1 : 0;
+  const node = children[idx];
+  if (node.type === 'text') {
+    const t = node as { value: string };
+    t.value = side === 'end' ? t.value.replace(/\n$/, '') : t.value.replace(/^\n/, '');
+    if (t.value === '') return children.filter((_, k) => k !== idx);
+  }
+  return children;
+}
+
+/**
+ * .md 記事中の X / YouTube の生 URL を埋め込みに変換する remark プラグイン。
+ * remarkSpotifyEmbed と違い、diary の「空行なし段落内の URL 行」も分割して変換する。
+ * astro.config では remarkBreaksForDiary より **前** に置くこと（text 内の生 `\n` で行判定するため）。
+ */
+export function remarkMediaEmbed() {
+  return (tree: Root) => {
+    visit(tree, 'paragraph', (node: Paragraph, index, parent) => {
+      if (!parent || typeof index !== 'number') return;
+
+      // 段落内で最初に該当する「行独立の埋め込み URL」を探す
+      for (let i = 0; i < node.children.length; i++) {
+        const child = node.children[i];
+        if (!isAutolinkLiteral(child)) continue;
+        const html = toEmbedHtml(child.url);
+        if (!html) continue;
+        if (!isLineStandalone(node.children, i)) continue;
+
+        const before = trimBoundary(node.children.slice(0, i), 'end');
+        const after = trimBoundary(node.children.slice(i + 1), 'start');
+        const htmlNode: RootContent = { type: 'html', value: html };
+
+        const segments: RootContent[] = [];
+        if (before.length > 0) segments.push({ type: 'paragraph', children: before } as Paragraph);
+        segments.push(htmlNode);
+        if (after.length > 0) segments.push({ type: 'paragraph', children: after } as Paragraph);
+
+        (parent as Parent).children.splice(index, 1, ...segments);
+
+        // after 段落があればそれを次に再訪して残りの URL も処理させる
+        const hasAfter = after.length > 0;
+        return [SKIP, index + segments.length - (hasAfter ? 1 : 0)];
+      }
+    });
+  };
+}

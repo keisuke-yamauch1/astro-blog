@@ -1,6 +1,7 @@
 // Remark plugins
 export { remarkBreaksForDiary } from './remark-breaks-for-diary';
 export { remarkSpotifyEmbed } from './remark-spotify-embed';
+export { remarkMediaEmbed } from './remark-media-embed';
 
 // Rehype plugins
 export { rehypeTargetBlank } from './rehype-target-blank';
